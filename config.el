@@ -50,3 +50,10 @@
 ;;
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
+
+;; no idea why these are dead here, define them...
+
+(require 'iso-transl)
+(global-set-key [S-dead-grave] "`")
+(global-set-key [dead-acute] "´")
+(global-set-key [dead-circumflex] "^")
