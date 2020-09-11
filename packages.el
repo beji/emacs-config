@@ -48,3 +48,4 @@
 (package! zig-mode)
 (package! fireplace)
 (package! ox-twbs)
+(package! lsp-treemacs)

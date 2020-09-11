@@ -22,9 +22,9 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-;; test
                                         ;(setq doom-font (font-spec :family "monospace" :size 14)
                                         ;      doom-variable-pitch-font (font-spec :family "sans"))
+(setq doom-font (font-spec :family "Roboto Mono" :size 13))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -69,8 +69,6 @@
                                         ; (mac-auto-operator-composition-mode)
                                         ; (setq doom-font (font-spec :family "Fira Code" :size 13))
 
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ;; fix package download issues on ELPA
-
 (setq! evil-escape-key-sequence "jj")
 
 (setq ns-use-native-fullscreen t)
@@ -78,9 +76,11 @@
 (add-hook! web-mode 'add-node-modules-path)
 (add-hook! js2-mode 'add-node-modules-path)
 (add-hook! typescript-mode 'add-node-modules-path)
+(add-hook! yaml-mode 'add-node-modules-path)
 (add-hook! web-mode 'prettier-js-mode)
 (add-hook! js2-mode 'prettier-js-mode)
 (add-hook! typescript-mode 'prettier-js-mode)
+(add-hook! yaml-mode 'prettier-js-mode)
 
 ;;(setq doom-theme 'doom-gruvbox)
 
@@ -95,9 +95,16 @@
   :config
   (add-to-list 'auto-mode-alist (cons (purecopy "\\.yml\\'") 'yaml-mode)))
 
+(use-package! web-mode
+  :config
+  (add-to-list 'auto-mode-alist (cons (purecopy "\\.isml\\'") 'web-mode)))
+
 (defun toggle-fullscreen ()
   "Toggle full screen"
   (interactive)
   (set-frame-parameter
    nil 'fullscreen
    (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+
+(use-package! lsp-treemacs
+  :config (lsp-treemacs-sync-mode 1))
