@@ -24,7 +24,8 @@
 ;; font string. You generally only need these two:
                                         ;(setq doom-font (font-spec :family "monospace" :size 14)
                                         ;      doom-variable-pitch-font (font-spec :family "sans"))
-(setq doom-font (font-spec :family "Roboto Mono" :size 13))
+;;(setq doom-font (font-spec :family "Roboto Mono" :size 13))
+(setq doom-font (font-spec :family "Hack" :size 13))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -108,3 +109,36 @@
 
 (use-package! lsp-treemacs
   :config (lsp-treemacs-sync-mode 1))
+
+(use-package! lsp-java
+  :config
+  (setq lsp-java-java-path "/Users/bjoernerlwein/.asdf/installs/java/adoptopenjdk-12.0.2+10.1/bin/java")
+  )
+
+;; (use-package! org-jira
+;;   :init
+;;   (setq jiralib-url "https://jira.empirie.com")
+;;   :config
+;;   (setq org-jira-working-dir "~/Documents/org-jira")
+;;   (add-to-list 'org-agenda-files org-jira-working-dir)
+;;   )
+
+(use-package! ejira
+  :init
+  (setq org-id-track-globally t
+        jiralib2-url              "https://jira.empirie.com"
+        jiralib2-auth             'basic
+        jiralib2-user-login-name  "berlwein"
+        jiralib2-token            nil
+
+        ejira-org-directory       "~/Documents/jira"
+        ejira-main-project        "NCO"
+        ejira-projects            '("NCO" "RMK" "HDR"))
+   :config
+   (setq ejira-epic-field 'customfield_1006
+         ejira-sprint-field 'customfield_10005
+         ejira-epic-summary-field 'customfield_10007)
+  ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
+  ;; into your `org-agenda-files'.
+  (add-to-list 'org-agenda-files ejira-org-directory)
+   (require 'ejira-agenda))

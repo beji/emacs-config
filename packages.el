@@ -49,3 +49,6 @@
 (package! fireplace)
 (package! ox-twbs)
 (package! lsp-treemacs)
+(package! ox-jira)
+;;(package! org-jira)
+(package! ejira :recipe (:host github :repo "nyyManni/ejira"))
