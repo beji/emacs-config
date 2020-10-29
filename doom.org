@@ -432,15 +432,28 @@ Mainly for fancy little class overviews for the java lsp
   :config (lsp-treemacs-sync-mode 1))
 #+end_src
 
-*** ox-jira
+* Org mode
+
+** org-clock
+
+A great tool for time keeping, with automated upload to jira thanks to =ejira=.
+Persist the clock through restarts.
+
+#+begin_src emacs-lisp
+(after! org-clock
+  (setq org-clock-persist t)
+  (org-clock-persistence-insinuate))
+#+end_src
+
+** ox-jira
 
 Conversion from org syntax to jira syntax.
 
 #+begin_src emacs-lisp :tangle packages.el
-(package! ox-jira)
+;;(package! ox-jira)
 #+end_src
 
-*** ejira
+** ejira
 
 Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so it is pulled from github directly.
 
@@ -463,9 +476,33 @@ Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so i
   :config
   (setq ejira-epic-field 'customfield_1006
         ejira-sprint-field 'customfield_10005
-        ejira-epic-summary-field 'customfield_10007)
+        ejira-epic-summary-field 'customfield_10007
+
+        ;; for some reason the hour logs are one hour off
+        ejira-hourmarking-step 60
+
+        ejira-todo-states-alist   '(("To Do"       . 1)
+                                    ("In Progress" . 5)
+                                    ("Done"        . 3)))
+
   ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
   ;; into your `org-agenda-files'.
   (add-to-list 'org-agenda-files ejira-org-directory)
   (require 'ejira-agenda))
 #+end_src
+
+A custom command to look at issues assigned to me.
+
+#+begin_src emacs-lisp
+(org-add-agenda-custom-command
+ '("c" "Jira issues assigned to me"
+   ((ejira-jql "assignee = currentUser() AND resolution = Unresolved order by updated DESC"
+               ((org-agenda-overriding-header "Assigned to me")))
+    (ejira-jql "reporter = currentUser() AND resolution = Unresolved order by updated DESC"
+               ((org-agenda-overriding-header "Created by me")))
+    (ejira-jql "domain =\"Order\"  and  issuetype = \"Daily Business\" and resolution = Unresolved ORDER BY created DESC"
+               ((org-agenda-overriding-header "Daily business tickets"))))))
+#+end_src
+
+*** How to push =org-clock= stuff to Jira.
+Run =ejira-hourmarking-get-hourlog= and then =C-c C-c=
