@@ -278,12 +278,21 @@ Default file headers, provided as-is from doom
 
 A macro to do stuff depending on OS
 
-#+begin_src emacs-lisp
+#+name: with-system-macro
+#+begin_src emacs-lisp :tangle no 
 (defmacro with-system (type &rest body)
   "Evaluate BODY if `system-type' equals TYPE."
   (declare (indent defun))
   `(when (eq system-type ',type)
      ,@body))
+#+end_src
+
+#+begin_src emacs-lisp :noweb yes
+<<with-system-macro>>
+#+end_src
+
+#+begin_src emacs-lisp :noweb yes :tangle packages.el
+<<with-system-macro>>
 #+end_src
 
 First set up some general user info stuff.
