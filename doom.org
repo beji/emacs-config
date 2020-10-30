@@ -279,7 +279,7 @@ Default file headers, provided as-is from doom
 A macro to do stuff depending on OS
 
 #+name: with-system-macro
-#+begin_src emacs-lisp :tangle no 
+#+begin_src emacs-lisp :tangle no
 (defmacro with-system (type &rest body)
   "Evaluate BODY if `system-type' equals TYPE."
   (declare (indent defun))
@@ -441,15 +441,23 @@ Makes a nice fireplace animation
 
 *** lsp-treemacs
 
-Mainly for fancy little class overviews for the java lsp
+Mainly for fancy little class overviews for the java lsp.
 
 #+begin_src emacs-lisp :tangle packages.el
 (package! lsp-treemacs)
 #+end_src
 
+Enable sync between =treemacs= and =lsp=.
+
 #+begin_src emacs-lisp
 (use-package! lsp-treemacs
   :config (lsp-treemacs-sync-mode 1))
+#+end_src
+
+A fancy class/symbol overview can be toggled with
+
+#+begin_src emacs-lisp :tangle no
+(lsp-treemacs-symbols)
 #+end_src
 
 * Org mode
