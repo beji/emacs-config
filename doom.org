@@ -470,7 +470,8 @@ Persist the clock through restarts.
 Conversion from org syntax to jira syntax.
 
 #+begin_src emacs-lisp :tangle packages.el
-;;(package! ox-jira)
+;; straight expects a master branch that this doesn't have
+(package! ox-jira :recipe (:branch "trunk"))
 #+end_src
 
 ** ejira
