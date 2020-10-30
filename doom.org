@@ -476,11 +476,11 @@ Conversion from org syntax to jira syntax.
 
 ** ejira
 
-Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so it is pulled from github directly. Only activate this on macOs as my private system doesn't need this.
+Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so it is pulled from github directly. Only activate this on macOs as my private system doesn't need this. This currently uses a fork until https://github.com/nyyManni/ejira/issues/33 is resolved.
 
 #+begin_src emacs-lisp :tangle packages.el
 (with-system darwin
-             (package! ejira :recipe (:host github :repo "nyyManni/ejira")))
+  (package! ejira :recipe (:host github :repo "beji/ejira")))
 #+end_src
 
 #+begin_src emacs-lisp
