@@ -512,33 +512,39 @@ Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so i
 
 #+begin_src emacs-lisp
 (with-system darwin
-             (use-package! ejira
-               :init
-               (setq org-id-track-globally t
-                     jiralib2-url              "https://jira.empirie.com"
-                     jiralib2-auth             'basic
-                     jiralib2-user-login-name  "berlwein"
-                     jiralib2-token            nil
+  (use-package! ejira
+    :init
+    (setq org-id-track-globally t
+          jiralib2-url              "https://jira.empirie.com"
+          jiralib2-auth             'basic
+          jiralib2-user-login-name  "berlwein"
+          jiralib2-token            nil
 
-                     ejira-org-directory       "~/Documents/jira"
-                     ejira-main-project        "NCO"
-                     ejira-projects            '("NCO" "RMK" "HDR"))
-               :config
-               (setq ejira-epic-field 'customfield_1006
-                     ejira-sprint-field 'customfield_10005
-                     ejira-epic-summary-field 'customfield_10007
+          ejira-org-directory       "~/Documents/jira"
+          ejira-main-project        "NCO"
+          ejira-projects            '("NCO" "RMK" "HDR")
+          )
+    :config
+    (setq
+     ejira-epic-field 'customfield_1006
+     ejira-sprint-field 'customfield_10005
+     ejira-epic-summary-field 'customfield_10007
 
-                     ;; for some reason the hour logs are one hour off
-                     ejira-hourmarking-step 60
+     ;; for some reason the hour logs are one hour off
+     ejira-hourmarking-step 60
 
-                     ejira-todo-states-alist   '(("To Do"       . 1)
-                                                 ("In Progress" . 5)
-                                                 ("Done"        . 3)))
+     ejira-todo-states-alist   '(("Ready to Start"       . 1)
+                                 ("in Progress" . 3)
+                                 ("Waiting Internal" . 4)
+                                 ("To be tested" . 5)
+                                 ("Done"        . 6)
+                                 ("Closed" . 6))
+     ejira-scrum-project "NCO")
 
-               ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
-               ;; into your `org-agenda-files'.
-               (add-to-list 'org-agenda-files ejira-org-directory)
-               (require 'ejira-agenda)))
+    ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
+    ;; into your `org-agenda-files'.
+    (add-to-list 'org-agenda-files ejira-org-directory)
+    (require 'ejira-agenda)))
 #+end_src
 
 A custom command to look at issues assigned to me.
