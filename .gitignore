@@ -7,3 +7,4 @@ tmp/
 /config.el
 /init.el
 /packages.el
+/custom.el
