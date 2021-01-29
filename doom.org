@@ -544,7 +544,7 @@ Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so i
 
           ejira-org-directory       "~/Documents/jira"
           ejira-main-project        "NCO"
-          ejira-projects            '("NCO" "RMK" "HDR")
+          ejira-projects            '("NCO" "RMK" "HDR" "INSPECT")
           )
     :config
     (setq
