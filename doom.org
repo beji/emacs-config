@@ -175,7 +175,7 @@ Default file headers, provided as-is from doom
 
        :tools
        ;;ansible
-       debugger          ; FIXME stepping through code, to help you add bugs
+       (debugger +lsp)          ; FIXME stepping through code, to help you add bugs
        direnv
        docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
@@ -235,7 +235,7 @@ Default file headers, provided as-is from doom
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       org               ; organize your plain life in plain text
+       (org +pomodoro)     ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
@@ -259,7 +259,7 @@ Default file headers, provided as-is from doom
        (:if IS-LINUX zig)  ; custom zig lang module
 
        :email
-       mu4e
+       (:if IS-LINUX mu4e)
        ;;notmuch
        ;;(wanderlust +gmail)
 
@@ -329,7 +329,7 @@ This defines where projectile searches for projects to import.
 
 #+begin_src emacs-lisp
 (with-system darwin
-             (setq projectile-project-search-path '("~/random programmier zeug/" "~/emma/")))
+  (setq projectile-project-search-path '("~/random programmier zeug/" "~/emma/" "~/emma/order/" "~/emma/inspect/")))
 #+end_src
 
 Delete trailing whitespace on save.
@@ -534,6 +534,22 @@ Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so i
 
 #+begin_src emacs-lisp
 (with-system darwin
+  (use-package! alert
+    :config
+    (setq alert-default-style 'osx-notifier)))
+#+end_src
+
+#+begin_src emacs-lisp
+(with-system darwin
+  (use-package! org-pomodoro
+    :config
+    (setq org-pomodoro-play-sounds t
+          org-pomodoro-keep-killed-pomodoro-time t
+          org-pomodoro-clock-break t)))
+#+end_src
+
+#+begin_src emacs-lisp
+(with-system darwin
   (use-package! ejira
     :init
     (setq org-id-track-globally t
@@ -544,7 +560,7 @@ Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so i
 
           ejira-org-directory       "~/Documents/jira"
           ejira-main-project        "NCO"
-          ejira-projects            '("NCO" "RMK" "HDR" "INSPECT")
+          ejira-projects            '("NCO" "RMK" "HDR" "INSPECT" "ISA" "ORDER")
           )
     :config
     (setq
@@ -556,11 +572,11 @@ Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so i
      ejira-hourmarking-step 60
 
      ejira-todo-states-alist   '(("Ready to Start"       . 1)
-                                 ("in Progress" . 3)
-                                 ("Waiting Internal" . 4)
-                                 ("To be tested" . 5)
-                                 ("Done"        . 6)
-                                 ("Closed" . 6))
+                                 ("in Progress" . 4)
+                                 ("Waiting Internal" . 5)
+                                 ("To be tested" . 8)
+                                 ("Done"        . 8)
+                                 ("Closed" . 8))
      ejira-scrum-project "NCO")
 
     ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
