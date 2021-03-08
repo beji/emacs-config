@@ -357,23 +357,27 @@ Need a somewhat more recent JVM than the OS provides.
 #+begin_src emacs-lisp
 (with-system gnu/linux
   ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
-  (set-email-account! "bjoernerlwein.de"
-                      '((mu4e-sent-folder       . "/bjoernerlweinde/Sent")
-                        (mu4e-drafts-folder     . "/bjoernerlweinde/Drafts")
-                        (mu4e-trash-folder      . "/bjoernerlweinde/Trash")
-                        (mu4e-refile-folder     . "/bjoernerlweinde/All Mail")
-                        (smtpmail-smtp-user     . "bjoern@bjoernerlwein.de")
-                        (smtpmail-smtp-server   . "hosted.mailcow.de")
-                        (smtpmail-servers-requiring-authorization . ".+")
-                        (starttls-use-gnutls    . t)
-                        (starttls-gnutls-program . "gnutls-cli")
-                        (starttls-extra-arguments . nil)
-                        (smtpmail-stream-type .   'ssl)
-                        (smtpmail-smtp-service  . 465)
-                        (user-mail-address      . "bjoern@bjoernerlwein.de")    ;; only needed for mu < 1.4
-                        (mu4e-compose-signature . "---\nBjörn Erlwein"))
-                      t)
-  )
+  (use-package! mu4e
+    :config
+    (setq browse-url-generic-program "wslview"
+          browse-url-browser-function 'browse-url-generic)
+    (set-email-account! "bjoernerlwein.de"
+                        '((mu4e-sent-folder       . "/bjoernerlweinde/Sent")
+                          (mu4e-drafts-folder     . "/bjoernerlweinde/Drafts")
+                          (mu4e-trash-folder      . "/bjoernerlweinde/Trash")
+                          (mu4e-refile-folder     . "/bjoernerlweinde/All Mail")
+                          (smtpmail-smtp-user     . "bjoern@bjoernerlwein.de")
+                          (smtpmail-smtp-server   . "hosted.mailcow.de")
+                          (smtpmail-servers-requiring-authorization . ".+")
+                          (starttls-use-gnutls    . t)
+                          (starttls-gnutls-program . "gnutls-cli")
+                          (starttls-extra-arguments . nil)
+                          (smtpmail-stream-type .   ssl)
+                          (smtpmail-smtp-service  . 465)
+                          (user-mail-address      . "bjoern@bjoernerlwein.de")    ;; only needed for mu < 1.4
+                          (mu4e-compose-signature . "\nBjörn Erlwein"))
+                        t)
+    ))
 #+end_src
 
 ** Mac OS configurations
@@ -401,11 +405,20 @@ For whatever reason these don't work correctly on my gentoo WSL system...
 
 #+begin_src emacs-lisp
 (with-system gnu/linux
-             (require 'iso-transl)
-             (global-set-key [S-dead-grave] "`")
-             (global-set-key [dead-acute] "´")
-             (global-set-key [dead-circumflex] "^")
-             )
+  (require 'iso-transl)
+  (global-set-key [S-dead-grave] "`")
+  (global-set-key [dead-acute] "´")
+  (global-set-key [dead-circumflex] "^")
+
+  (defun wsl--browse-url (url &optional _new-window)
+    ;; new-window ignored
+    "Opens link via powershell.exe"
+    (interactive (browse-url-interactive-arg "URL: "))
+    (let ((quotedUrl (format "start '%s'" url)))
+      (apply 'call-process "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe" nil
+             0 nil
+             (list "-Command" quotedUrl))))
+  )
 #+end_src
 
 ** Add more file endings to random modes
