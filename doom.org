@@ -9,7 +9,7 @@
 
 * How do I build this?
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no :results output silent
 (org-babel-tangle)
 #+end_src
 
