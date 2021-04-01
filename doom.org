@@ -136,7 +136,7 @@ Default file headers, provided as-is from doom
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
        ;;tabs              ; a tab bar for Emacs
-       treemacs          ; a project drawer, like neotree but cooler
+       ;;treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -221,7 +221,7 @@ Default file headers, provided as-is from doom
        ;;fsharp            ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;gdscript          ; the language you waited for
-       go                ; the hipster dialect
+       ;;go                ; the hipster dialect
        ;;(haskell +dante)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
@@ -335,11 +335,6 @@ This defines where projectile searches for projects to import.
   (setq projectile-project-search-path '("~/random programmier zeug/" "~/emma/" "~/emma/order/" "~/emma/inspect/")))
 #+end_src
 
-Delete trailing whitespace on save.
-
-#+begin_src emacs-lisp
-(add-hook 'before-save-hook #'delete-trailing-whitespace)
-#+end_src
 
 Need a somewhat more recent JVM than the OS provides.
 
@@ -496,26 +491,6 @@ Makes a nice fireplace animation
 (package! fireplace)
 #+end_src
 
-*** lsp-treemacs
-
-Mainly for fancy little class overviews for the java lsp.
-
-#+begin_src emacs-lisp :tangle packages.el
-(package! lsp-treemacs)
-#+end_src
-
-Enable sync between =treemacs= and =lsp=.
-
-#+begin_src emacs-lisp
-(use-package! lsp-treemacs
-  :config (lsp-treemacs-sync-mode 1))
-#+end_src
-
-A fancy class/symbol overview can be toggled with
-
-#+begin_src emacs-lisp :tangle no
-(lsp-treemacs-symbols)
-#+end_src
 
 * Org mode
 
