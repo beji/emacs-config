@@ -357,8 +357,6 @@ Need a somewhat more recent JVM than the OS provides.
   ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
   (use-package! mu4e
     :config
-    (setq browse-url-generic-program "wslview"
-          browse-url-browser-function 'browse-url-generic)
     (set-email-account! "bjoernerlwein.de"
                         '((mu4e-sent-folder       . "/bjoernerlweinde/Sent")
                           (mu4e-drafts-folder     . "/bjoernerlweinde/Drafts")
@@ -407,16 +405,13 @@ For whatever reason these don't work correctly on my gentoo WSL system...
   (global-set-key [S-dead-grave] "`")
   (global-set-key [dead-acute] "´")
   (global-set-key [dead-circumflex] "^")
-
-  (defun wsl--browse-url (url &optional _new-window)
-    ;; new-window ignored
-    "Opens link via powershell.exe"
-    (interactive (browse-url-interactive-arg "URL: "))
-    (let ((quotedUrl (format "start '%s'" url)))
-      (apply 'call-process "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe" nil
-             0 nil
-             (list "-Command" quotedUrl))))
-  )
+  (setq
+   cmdExeBin"/mnt/c/Windows/System32/cmd.exe"
+   cmdExeArgs '("/c" "start" "") )
+  (setq
+   browse-url-generic-program  cmdExeBin
+   browse-url-generic-args     cmdExeArgs
+   browse-url-browser-function 'browse-url-generic))
 #+end_src
 
 ** Add more file endings to random modes
