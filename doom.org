@@ -238,7 +238,7 @@ Default file headers, provided as-is from doom
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +pomodoro)     ; organize your plain life in plain text
+       (org +pomodoro +roam2)     ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
@@ -313,13 +313,6 @@ The font I currently like.
 
 #+begin_src emacs-lisp
 (setq doom-font (font-spec :family "Hack" :size 13))
-#+end_src
-
-Set default directories for =org= and =org-agenda=.
-
-#+begin_src emacs-lisp
-(setq org-directory "~/Documents/org/"
-      org-agenda-files '("~/Documents/org-agenda/"))
 #+end_src
 
 Enable line numbers everywhere.
@@ -486,9 +479,15 @@ Makes a nice fireplace animation
 (package! fireplace)
 #+end_src
 
-
 * Org mode
+** setup folders
+Set default directories for =org=, =org-agenda= and =org-roam=.
 
+#+begin_src emacs-lisp
+(setq org-directory "~/Documents/org/"
+      org-agenda-files '("~/Documents/org-agenda/")
+      org-roam-directory "~/notes")
+#+end_src
 ** org-clock
 
 A great tool for time keeping, with automated upload to jira thanks to =ejira=.
