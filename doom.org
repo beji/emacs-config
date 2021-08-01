@@ -259,7 +259,7 @@ Default file headers, provided as-is from doom
        ;;terra             ; Earth and Moon in alignment for performance.
        web               ; the tubes
        yaml              ; JSON, but readable
-       (:if IS-LINUX zig)  ; custom zig lang module
+       (:if IS-LINUX (zig +lsp))  ; custom zig lang module
 
        :email
        (:if IS-LINUX mu4e)
