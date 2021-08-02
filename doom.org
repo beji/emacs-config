@@ -530,8 +530,8 @@ Conversion from org syntax to jira syntax.
 Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so it is pulled from github directly. Only activate this on macOs as my private system doesn't need this.
 
 #+begin_src emacs-lisp :tangle packages.el
-(with-system darwin
-  (package! ejira :recipe (:host github :repo "nyyManni/ejira")))
+;;(with-system darwin
+;;  (package! ejira :recipe (:host github :repo "nyyManni/ejira")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -551,54 +551,54 @@ Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so i
 #+end_src
 
 #+begin_src emacs-lisp
-(with-system darwin
-  (use-package! ejira
-    :init
-    (setq org-id-track-globally t
-          jiralib2-url              "https://jira.empirie.com"
-          jiralib2-auth             'basic
-          jiralib2-user-login-name  "berlwein"
-          jiralib2-token            nil
+;; (with-system darwin
+;;   (use-package! ejira
+;;     :init
+;;     (setq org-id-track-globally t
+;;           jiralib2-url              "https://jira.empirie.com"
+;;           jiralib2-auth             'basic
+;;           jiralib2-user-login-name  "berlwein"
+;;           jiralib2-token            nil
 
-          ejira-org-directory       "~/Documents/jira"
-          ejira-main-project        "NCO"
-          ejira-projects            '("NCO" "RMK" "HDR" "INSPECT" "ISA" "ORDER")
-          )
-    :config
-    (setq
-     ejira-epic-field 'customfield_1006
-     ejira-sprint-field 'customfield_10005
-     ejira-epic-summary-field 'customfield_10007
+;;           ejira-org-directory       "~/Documents/jira"
+;;           ejira-main-project        "NCO"
+;;           ejira-projects            '("NCO" "RMK" "HDR" "INSPECT" "ISA" "ORDER")
+;;           )
+;;     :config
+;;     (setq
+;;      ejira-epic-field 'customfield_1006
+;;      ejira-sprint-field 'customfield_10005
+;;      ejira-epic-summary-field 'customfield_10007
 
-     ;; for some reason the hour logs are one hour off
-     ejira-hourmarking-step 60
+;;      ;; for some reason the hour logs are one hour off
+;;      ejira-hourmarking-step 60
 
-     ejira-todo-states-alist   '(("Ready to Start"       . 1)
-                                 ("in Progress" . 4)
-                                 ("Waiting Internal" . 5)
-                                 ("To be tested" . 8)
-                                 ("Done"        . 8)
-                                 ("Closed" . 8))
-     ejira-scrum-project "NCO")
+;;      ejira-todo-states-alist   '(("Ready to Start"       . 1)
+;;                                  ("in Progress" . 4)
+;;                                  ("Waiting Internal" . 5)
+;;                                  ("To be tested" . 8)
+;;                                  ("Done"        . 8)
+;;                                  ("Closed" . 8))
+;;      ejira-scrum-project "NCO")
 
-    ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
-    ;; into your `org-agenda-files'.
-    (add-to-list 'org-agenda-files ejira-org-directory)
-    (require 'ejira-agenda)))
+;;     ;; Make the issues visisble in your agenda by adding `ejira-org-directory'
+;;     ;; into your `org-agenda-files'.
+;;     (add-to-list 'org-agenda-files ejira-org-directory)
+;;     (require 'ejira-agenda)))
 #+end_src
 
 A custom command to look at issues assigned to me.
 
 #+begin_src emacs-lisp
-(with-system darwin
-             (org-add-agenda-custom-command
-              '("c" "Jira issues assigned to me"
-                ((ejira-jql "assignee = currentUser() AND resolution = Unresolved order by updated DESC"
-                            ((org-agenda-overriding-header "Assigned to me")))
-                 (ejira-jql "reporter = currentUser() AND resolution = Unresolved order by updated DESC"
-                            ((org-agenda-overriding-header "Created by me")))
-                 (ejira-jql "domain =\"Order\"  and  issuetype = \"Daily Business\" and resolution = Unresolved ORDER BY created DESC"
-                            ((org-agenda-overriding-header "Daily business tickets")))))))
+;; (with-system darwin
+;;              (org-add-agenda-custom-command
+;;               '("c" "Jira issues assigned to me"
+;;                 ((ejira-jql "assignee = currentUser() AND resolution = Unresolved order by updated DESC"
+;;                             ((org-agenda-overriding-header "Assigned to me")))
+;;                  (ejira-jql "reporter = currentUser() AND resolution = Unresolved order by updated DESC"
+;;                             ((org-agenda-overriding-header "Created by me")))
+;;                  (ejira-jql "domain =\"Order\"  and  issuetype = \"Daily Business\" and resolution = Unresolved ORDER BY created DESC"
+;;                             ((org-agenda-overriding-header "Daily business tickets")))))))
 #+end_src
 
 *** How to push =org-clock= stuff to Jira.
