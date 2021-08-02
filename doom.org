@@ -319,7 +319,7 @@ Set default directories for =org= and =org-agenda=.
 
 #+begin_src emacs-lisp
 (setq org-directory "~/Documents/org/"
-      org-agenda-files '("~/Documents/org-agenda/"))
+      org-agenda-files '("~/Documents/org/"))
 #+end_src
 
 Enable line numbers everywhere.
@@ -332,7 +332,7 @@ This defines where projectile searches for projects to import.
 
 #+begin_src emacs-lisp
 (with-system darwin
-  (setq projectile-project-search-path '("~/random programmier zeug/" "~/emma/" "~/emma/order/" "~/emma/inspect/")))
+  (setq projectile-project-search-path '("~/projects/")))
 #+end_src
 
 
@@ -340,9 +340,9 @@ Need a somewhat more recent JVM than the OS provides.
 
 #+begin_src emacs-lisp
 (with-system darwin
-             (use-package! lsp-java
-               :config
-               (setq lsp-java-java-path "/Users/bjoernerlwein/.asdf/installs/java/adoptopenjdk-12.0.2+10.1/bin/java")))
+  (use-package! lsp-java
+    :config
+    (setq lsp-java-java-path "/usr/bin/java")))
 #+end_src
 
 =Evil= uses =ESC= by default but that key doesn't exist on my mac...
@@ -414,6 +414,15 @@ For whatever reason these don't work correctly on my gentoo WSL system...
    browse-url-browser-function 'browse-url-generic))
 #+end_src
 
+** General Java Madness
+#+begin_src emacs-lisp
+(with-system darwin
+  (use-package! lsp-java
+    :config
+    (setq lsp-java-import-maven-enabled t
+          lsp-java-maven-download-sources t)
+    ))
+#+end_src
 ** Add more file endings to random modes
 
 #+begin_src emacs-lisp
