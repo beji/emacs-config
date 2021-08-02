@@ -511,6 +511,7 @@ Persist the clock through restarts.
 
 #+begin_src emacs-lisp
 (after! org-clock
+  (setq org-duration-format (quote h:mm))
   (setq org-clock-persist t)
   (org-clock-persistence-insinuate))
 #+end_src
