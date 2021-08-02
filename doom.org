@@ -495,6 +495,12 @@ Makes a nice fireplace animation
 (package! fireplace)
 #+end_src
 
+*** ox-twbs
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! ox-twbs)
+#+end_src
+
 
 * Org mode
 
