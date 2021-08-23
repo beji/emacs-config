@@ -424,6 +424,14 @@ For whatever reason these don't work correctly on my gentoo WSL system...
 #+end_src
 
 ** Custom packages
+*** git-auto-commit
+#+begin_src emacs-lisp :tangle packages.el
+(package! git-auto-commit-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+(setq-default gac-automatically-add-new-files-p t)
+#+end_src
 
 *** VCL mode
 
