@@ -329,16 +329,6 @@ This defines where projectile searches for projects to import.
   (setq projectile-project-search-path '("~/projects/")))
 #+end_src
 
-
-Need a somewhat more recent JVM than the OS provides.
-
-#+begin_src emacs-lisp
-(with-system darwin
-  (use-package! lsp-java
-    :config
-    (setq lsp-java-java-path "/usr/bin/java")))
-#+end_src
-
 =Evil= uses =ESC= by default but that key doesn't exist on my mac...
 
 #+begin_src emacs-lisp
