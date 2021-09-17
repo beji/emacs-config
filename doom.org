@@ -336,6 +336,10 @@ Need a somewhat more recent JVM than the OS provides.
              (use-package! lsp-java
                :config
                (setq lsp-java-java-path "/Users/bjoernerlwein/.asdf/installs/java/adoptopenjdk-12.0.2+10.1/bin/java")))
+(with-system gnu/linux
+             (use-package! lsp-java
+               :config
+               (setq lsp-java-java-path "/opt/openjdk-bin-15.0.9/bin/java")))
 #+end_src
 
 =Evil= uses =ESC= by default but that key doesn't exist on my mac...
