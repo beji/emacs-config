@@ -117,7 +117,7 @@ Default file headers, provided as-is from doom
        ;;ido               ; the other *other* search engine...
        ;;(ivy               ; a search engine for love and life
        ;; +fuzzy)
-       vertico
+       (vertico +icons)
 
        :ui
        ;;deft              ; notational velocity for Emacs
