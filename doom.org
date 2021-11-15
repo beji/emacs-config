@@ -242,7 +242,7 @@ Default file headers, provided as-is from doom
        (org +pomodoro +roam2)     ; organize your plain life in plain text
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
-       ;;plantuml          ; diagrams for confusing people more
+       (:if IS-MAC plantuml)          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        ;;python            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
@@ -422,6 +422,7 @@ For whatever reason these don't work correctly on my gentoo WSL system...
 (use-package! web-mode
   :config
   (add-to-list 'auto-mode-alist (cons (purecopy "\\.isml\\'") 'web-mode)))
+
 #+end_src
 
 ** Custom packages
@@ -494,6 +495,17 @@ Makes a nice fireplace animation
 (package! ox-twbs)
 #+end_src
 
+#+begin_src emacs-lisp :tangle packages.el
+(with-system darwin
+  (package! adoc-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(with-system darwin
+  (use-package! adoc-mode
+    :config
+    (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))))
+#+end_src
 ** LSP config
 
 LSP sets up the file watches kind of weirdly on my mac, try to improve this by ignoring certain things
@@ -508,6 +520,21 @@ LSP sets up the file watches kind of weirdly on my mac, try to improve this by i
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.vagrant\\'")
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]cp-ansible\\'")
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.9\\'")))
+#+end_src
+** PlantUML
+the mode offers a function to indent a line but not a whole buffer. It also doesn't react on =.puml= files
+
+#+begin_src emacs-lisp
+(with-system darwin
+  (defun zz/plantuml-indent-all-lines ()
+    (interactive)
+    (goto-char (point-min))
+    (while (not (eobp))
+      (plantuml-indent-line)
+      (forward-line 1)))
+  (use-package! plantuml-mode
+    :config
+    (add-to-list 'auto-mode-alist (cons (purecopy "\\.puml\\'") 'plantuml-mode))))
 #+end_src
 * Org mode
 ** setup folders
@@ -553,15 +580,6 @@ Jira issues integration for =org= and =org-agenda=. This isn't on MELPA yet so i
   (use-package! alert
     :config
     (setq alert-default-style 'osx-notifier)))
-#+end_src
-
-#+begin_src emacs-lisp
-(with-system darwin
-  (use-package! org-pomodoro
-    :config
-    (setq org-pomodoro-play-sounds t
-          org-pomodoro-keep-killed-pomodoro-time t
-          org-pomodoro-clock-break t)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -617,3 +635,90 @@ A custom command to look at issues assigned to me.
 
 *** How to push =org-clock= stuff to Jira.
 Run =ejira-hourmarking-get-hourlog= and then =C-c C-c=
+
+** pomodoro
+
+#+begin_src emacs-lisp
+(defun zz/org-get-clock-segment-timestamps (line)
+  "Parses a clock segment line and returns the first and last timestamps in a list."
+  (let* ((org-clock-regexp (concat "CLOCK: " org-ts-regexp3 "--" org-ts-regexp3))
+         (t1 (if (string-match org-clock-regexp line)
+                 (match-string 1 line)
+               (user-error "The argument must have a valid CLOCK range")))
+         (t2 (match-string 9 line)))
+    (list t1 t2)))
+
+(defun zz/org-compute-timestamp-difference (later-timestamp earlier-timestamp)
+  "Computes the number of seconds difference in string timestamps as a float."
+  (-
+   (float-time (apply #'encode-time (org-parse-time-string later-timestamp)))
+   (float-time (apply #'encode-time (org-parse-time-string earlier-timestamp)))))
+
+(defun zz/org-float-time-diff-to-hours-minutes (diff)
+  "Returns a float time difference in hh:mm format."
+  (let* ((hours (floor (/ diff 3600)))
+         (diff_minus_hours (- diff (* 3600 hours)))
+         (minutes (floor (/ diff_minus_hours 60))))
+    (car (split-string (format "%2d:%02d" hours minutes)))))
+
+(defun zz/org-clock-merge (&optional skip-merge-with-time-discrepancy)
+  "Merge the org CLOCK line with the next CLOCK line. If the last
+timestamp of the current line equals the first timestamp of the
+next line with a tolerance of up to 2 minutes, then merge
+automatically. If a discrepancy exists, prompt the user for
+confirmation, unless skip-merge-with-time-discrepancy is
+non-nil."
+
+  (interactive "P")
+  (let* ((first-line-start (line-beginning-position))
+         (first-line (buffer-substring
+                      (line-beginning-position) (line-end-position)))
+         (first-line-timestamps (zz/org-get-clock-segment-timestamps first-line))
+         (first-line-t1 (pop first-line-timestamps))
+         (first-line-t2 (pop first-line-timestamps))
+         (first-line-t2 (match-string 9 first-line))
+         (second-line (progn
+                        (forward-line)
+                        (buffer-substring
+                         (line-beginning-position) (line-end-position))))
+         (second-line-timestamps (zz/org-get-clock-segment-timestamps second-line))
+         (second-line-t1 (pop second-line-timestamps))
+         (second-line-t2 (pop second-line-timestamps))
+         (diff (zz/org-compute-timestamp-difference first-line-t1 second-line-t2)))
+
+    ;; ignore discrepancies of 2 minutes or less
+    (when (> diff 120)
+      (when skip-merge-with-time-discrepancy
+        (error "Skipping clock-merge"))
+      (unless (yes-or-no-p (concat (zz/org-float-time-diff-to-hours-minutes diff)
+                                   " discrepancy in times to merge. Proceed anyway?"))
+        (user-error "Cancelled zz/org-clock-merge")))
+
+    ;; remove the two lines
+    (delete-region first-line-start (line-end-position))
+    ;; insert new time range
+    (insert (concat "CLOCK: [" second-line-t1 "]--[" first-line-t2 "]"))
+    ;; generate duration
+    (org-ctrl-c-ctrl-c)))
+
+(defun zz/org-try-merging-last-clock-out ()
+  "Try to merge the latest clock-out, and catch the error if the discrepancy is not zero."
+  (save-excursion
+    (org-save-outline-visibility t
+      (progn
+        (org-clock-goto)
+        (search-forward org-last-inserted-timestamp)
+        (condition-case nil
+            (zz/org-clock-merge t)
+          (error))
+        ))))
+
+(with-system darwin
+  (use-package! org-pomodoro
+    :config
+    (add-hook 'org-clock-out-hook #'zz/org-try-merging-last-clock-out)
+    (setq org-pomodoro-play-sounds t
+          org-pomodoro-keep-killed-pomodoro-time t
+          org-pomodoro-clock-break t
+          org-pomodoro-long-break-length 10)))
+#+end_src
