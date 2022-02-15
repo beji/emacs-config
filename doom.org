@@ -358,7 +358,12 @@ This defines where projectile searches for projects to import.
                           (user-mail-address      . "bjoern@bjoernerlwein.de")    ;; only needed for mu < 1.4
                           (mu4e-compose-signature . "\nBjörn Erlwein"))
                         t)
-    ))
+    )
+  (defun zz/mu4e-mark-all-for-read ()
+    "Mark all elements in a mu4e list"
+    (interactive)
+    (while (not (eobp))
+      (mu4e-headers-mark-for-read))))
 #+end_src
 
 ** Mac OS configurations
