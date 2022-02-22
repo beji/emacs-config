@@ -397,14 +397,7 @@ For whatever reason these don't work correctly on my gentoo WSL system...
   (require 'iso-transl)
   (global-set-key [S-dead-grave] "`")
   (global-set-key [dead-acute] "´")
-  (global-set-key [dead-circumflex] "^")
-  (setq
-   cmdExeBin"/mnt/c/Windows/System32/cmd.exe"
-   cmdExeArgs '("/c" "start" "") )
-  (setq
-   browse-url-generic-program  cmdExeBin
-   browse-url-generic-args     cmdExeArgs
-   browse-url-browser-function 'browse-url-generic))
+  (global-set-key [dead-circumflex] "^"))
 #+end_src
 
 ** General Java Madness
