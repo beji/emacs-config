@@ -537,6 +537,15 @@ the mode offers a function to indent a line but not a whole buffer. It also does
     :config
     (add-to-list 'auto-mode-alist (cons (purecopy "\\.puml\\'") 'plantuml-mode))))
 #+end_src
+
+** Web Browser
+Set firefox as the main browser as that is used everywhere
+
+#+begin_src emacs-lisp
+(setq browse-url-browser-function 'browse-url-firefox
+      browse-url-new-window-flag t
+      browse-url-firefox-new-window-is-tab t)
+#+end_src
 * Org mode
 ** setup folders
 Set default directories for =org=, =org-agenda= and =org-roam=.
