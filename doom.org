@@ -507,21 +507,6 @@ Makes a nice fireplace animation
     :config
     (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))))
 #+end_src
-** LSP config
-
-LSP sets up the file watches kind of weirdly on my mac, try to improve this by ignoring certain things
-
-#+begin_src emacs-lisp
-(with-system darwin
-  (use-package! lsp-mode
-    :config
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.direnv\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]solace\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.terraform\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.vagrant\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]cp-ansible\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.9\\'")))
-#+end_src
 ** PlantUML
 the mode offers a function to indent a line but not a whole buffer. It also doesn't react on =.puml= files
 
