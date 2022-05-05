@@ -195,7 +195,8 @@ Default file headers, provided as-is from doom
        ;;prodigy           ; FIXME managing external services & code builders
        ;;rgb               ; creating color strings
        ;;taskrunner        ; taskrunner for all your projects
-       terraform         ; infrastructure as code
+       (:if IS-MAC (terraform +lsp))         ; infrastructure as code
+       (:if IS-LINUX terraform)
        ;;tmux              ; an API for interacting with tmux
        ;;upload            ; map local to remote projects via ssh/ftp
 
@@ -215,7 +216,7 @@ Default file headers, provided as-is from doom
        data              ; config/data formats
        ;;(dart +flutter)   ; paint ui and not much else
        ;;dhall
-       (elixir +lsp)            ; erlang done right
+       (:if IS-LINUX (elixir +lsp))            ; erlang done right
        ;;elm               ; care for a cup of TEA?
        emacs-lisp        ; drown in parentheses
        ;;erlang            ; an elegant language for a more civilized age
@@ -229,8 +230,9 @@ Default file headers, provided as-is from doom
        ;;(haskell +dante)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
-       ;;json              ; At least it ain't XML
-       (java +lsp)
+       (:if IS-MAC (json +lsp))              ; At least it ain't XML
+       (:if IS-LINUX json)
+       (:if IS-MAC (java +lsp))
        (javascript +lsp)        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
@@ -263,7 +265,8 @@ Default file headers, provided as-is from doom
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        web               ; the tubes
-       yaml              ; JSON, but readable
+       (:if IS-MAC (yaml +lsp))              ; JSON, but readable
+       (:if IS-LINUX yaml)
        (:if IS-LINUX (zig +lsp))  ; custom zig lang module
 
        :email
@@ -339,6 +342,12 @@ This defines where projectile searches for projects to import.
 (setq! evil-escape-key-sequence "jj")
 #+end_src
 
+Disable auto formatting for `yaml`, it conflicts with ansible-lint
+
+#+begin_src emacs-lisp
+;;(setq +format-on-save-enabled-modes '(not yaml-mode))
+#+end_src
+
 ** Email configuration stuff
 #+begin_src emacs-lisp
 (with-system gnu/linux
@@ -402,6 +411,17 @@ For whatever reason these don't work correctly on my gentoo WSL system...
 
 ** General Java Madness
 #+begin_src emacs-lisp
+(with-system darwin
+  (after! eglot
+    (add-to-list 'eglot-server-programs '((java-mode) . (eglot-eclipse-jdt "jdtls")))
+    (defclass eglot-eclipse-jdt (eglot-lsp-server) ()
+      :documentation "A wrapper for jdtls as that breaks spec")
+
+    (cl-defmethod eglot-execute-command
+      ((_server eglot-eclipse-jdt) (_cmd (eql java.apply.workspaceEdit)) arguments)
+      "Eclipse JDT breaks spec and replies with edits as arguments."
+      (mapc #'eglot--apply-workspace-edit arguments))))
+
 ;; (with-system darwin
 ;;   (use-package! lsp-java
 ;;     :config
@@ -464,7 +484,8 @@ Automatically add the =node_modules= folder to =PATH=.
 (add-hook! web-mode 'add-node-modules-path)
 (add-hook! js2-mode 'add-node-modules-path)
 (add-hook! typescript-mode 'add-node-modules-path)
-(add-hook! yaml-mode 'add-node-modules-path)
+(with-system gnu/linux
+  (add-hook! yaml-mode 'add-node-modules-path))
 #+end_src
 
 *** prettier-js
@@ -479,7 +500,8 @@ Prettier integration on save
 (add-hook! web-mode 'prettier-js-mode)
 (add-hook! js2-mode 'prettier-js-mode)
 (add-hook! typescript-mode 'prettier-js-mode)
-(add-hook! yaml-mode 'prettier-js-mode)
+(with-system gnu/linux
+  (add-hook! yaml-mode 'prettier-js-mode))
 #+end_src
 
 *** fireplace
@@ -491,7 +513,6 @@ Makes a nice fireplace animation
 #+end_src
 
 *** ox-twbs
-
 #+begin_src emacs-lisp :tangle packages.el
 (package! ox-twbs)
 #+end_src
@@ -507,6 +528,14 @@ Makes a nice fireplace animation
     :config
     (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))))
 #+end_src
+*** eglot
+#+begin_src emacs-lisp :tangle packages.el
+;; (with-system darwin
+;;   (package! eglot :recipe (:host github :repo "beji/eglot" :branch "fix-jdtls-java-apply-workspaceedit")    )
+;;   (unpin! eglot))
+#+end_src
+
+
 ** PlantUML
 the mode offers a function to indent a line but not a whole buffer. It also doesn't react on =.puml= files
 
@@ -522,14 +551,19 @@ the mode offers a function to indent a line but not a whole buffer. It also does
     :config
     (add-to-list 'auto-mode-alist (cons (purecopy "\\.puml\\'") 'plantuml-mode))))
 #+end_src
-
 ** Web Browser
 Set firefox as the main browser as that is used everywhere
-
 #+begin_src emacs-lisp
 (setq browse-url-browser-function 'browse-url-firefox
       browse-url-new-window-flag t
       browse-url-firefox-new-window-is-tab t)
+#+end_src
+** Extend eglot lsp definitions
+
+#+begin_src emacs-lisp
+(use-package! eglot
+  :config
+  (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve"))))
 #+end_src
 * Org mode
 ** setup folders
@@ -607,7 +641,7 @@ This is the function used in `ejira-update-project'. Override with
 
      ejira-update-jql-resolved-fn #'ejira-jql-all-resolved-project-tickets-custom
      ;; only sync my own tickets
-     ejira-update-jql-unresolved-fn #'(setq ejira-update-jql-unresolved-fn #'ejira-jql-my-unresolved-project-tickets)
+     ejira-update-jql-unresolved-fn #'ejira-jql-my-unresolved-project-tickets
 
      ;; for some reason the hour logs are one hour off
      ejira-hourmarking-step 60
