@@ -535,7 +535,11 @@ Makes a nice fireplace animation
 ;;   (unpin! eglot))
 #+end_src
 
-
+*** Gentoo ebuilds
+#+begin_src emacs-lisp :tangle packages.el
+(with-system gnu/linux
+  (package! ebuild-mode))
+#+end_src
 ** PlantUML
 the mode offers a function to indent a line but not a whole buffer. It also doesn't react on =.puml= files
 
