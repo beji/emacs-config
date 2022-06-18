@@ -414,6 +414,8 @@ For whatever reason these don't work correctly on my gentoo WSL system...
 #+begin_src emacs-lisp
 (with-system darwin
   (after! eglot
+    (add-to-list 'eglot-server-programs '((groovy-mode) . ("/Users/ap4624/projects/groovy-language-server-master/groovy-lsp.sh")))
+    (add-to-list 'eglot-server-programs '((nxml-mode) . ("java" "-jar" "/Users/ap4624/projects/lemminx/org.eclipse.lemminx/target/org.eclipse.lemminx-uber.jar")))
     (add-to-list 'eglot-server-programs '((java-mode) . (eglot-eclipse-jdt "jdtls")))
     (defclass eglot-eclipse-jdt (eglot-lsp-server) ()
       :documentation "A wrapper for jdtls as that breaks spec")
