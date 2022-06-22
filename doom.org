@@ -188,6 +188,9 @@ Default file headers, provided as-is from doom
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
        (lsp +eglot)
+       (:if IS-MAC lsp)         ; infrastructure as code
+       (:if IS-LINUX (lsp +eglot))
+       ;;(lsp +eglot)
        magit             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        pass              ; password manager for nerds
@@ -543,6 +546,21 @@ Makes a nice fireplace animation
 (with-system gnu/linux
   (package! ebuild-mode))
 #+end_src
+** Config for lsp-mode
+
+lsp-mode sets up the file watches kind of weirdly on my mac, try to improve this by ignoring certain things
+
+#+begin_src emacs-lisp
+(with-system darwin
+  (use-package! lsp-mode
+    :config
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.direnv\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]solace\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.terraform\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.vagrant\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]cp-ansible\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.9\\'")))
+#+end_src
 ** PlantUML
 the mode offers a function to indent a line but not a whole buffer. It also doesn't react on =.puml= files
 
@@ -568,9 +586,10 @@ Set firefox as the main browser as that is used everywhere
 ** Extend eglot lsp definitions
 
 #+begin_src emacs-lisp
-(use-package! eglot
-  :config
-  (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve"))))
+(with-system gnu/linux
+  (use-package! eglot
+    :config
+    (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve")))))
 #+end_src
 * Org mode
 ** setup folders
