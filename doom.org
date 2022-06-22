@@ -187,7 +187,6 @@ Default file headers, provided as-is from doom
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
-       (lsp +eglot)
        (:if IS-MAC lsp)         ; infrastructure as code
        (:if IS-LINUX (lsp +eglot))
        ;;(lsp +eglot)
