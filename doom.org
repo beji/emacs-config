@@ -533,6 +533,19 @@ Makes a nice fireplace animation
     :config
     (add-to-list 'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))))
 #+end_src
+*** lsp-sonarlint
+
+#+begin_src emacs-lisp :tangle packages.el
+(with-system darwin
+  (package! lsp-sonarlint)
+  (use-package! lsp-java
+    :config
+    (setq lsp-sonarlint-java-enabled t)
+    :after
+    (require 'lsp-sonarlint)
+    (require 'lsp-sonarlint-java)))
+#+end_src
+
 *** eglot
 #+begin_src emacs-lisp :tangle packages.el
 ;; (with-system darwin
