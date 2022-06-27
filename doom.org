@@ -571,7 +571,8 @@ lsp-mode sets up the file watches kind of weirdly on my mac, try to improve this
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.terraform\\'")
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.vagrant\\'")
     (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]cp-ansible\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.9\\'")))
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.9\\'")
+    (add-hook 'nxml-mode-local-vars-hook #'lsp! 'append)))
 #+end_src
 ** PlantUML
 the mode offers a function to indent a line but not a whole buffer. It also doesn't react on =.puml= files
