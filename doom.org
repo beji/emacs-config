@@ -187,8 +187,7 @@ Default file headers, provided as-is from doom
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
-       (:if IS-MAC lsp)         ; infrastructure as code
-       (:if IS-LINUX (lsp +eglot))
+       lsp                 ; infrastructure as code
        magit             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        pass              ; password manager for nerds
@@ -351,6 +350,11 @@ Disable auto formatting for `yaml`, it conflicts with ansible-lint
 ;;(setq +format-on-save-enabled-modes '(not yaml-mode))
 #+end_src
 
+#+begin_src emacs-lisp
+(setq! use-lsp-mode (not (eq (locate-library "lsp-mode") nil)))
+(setq! use-eglot (not (eq (locate-library "eglot") nil)))
+#+end_src
+
 ** Email configuration stuff
 #+begin_src emacs-lisp
 (with-system gnu/linux
@@ -414,26 +418,31 @@ For whatever reason these don't work correctly on my gentoo WSL system...
 
 ** General Java Madness
 #+begin_src emacs-lisp
-;; (with-system darwin
-;;   (after! eglot
-;;     (add-to-list 'eglot-server-programs '((groovy-mode) . ("/Users/ap4624/projects/groovy-language-server-master/groovy-lsp.sh")))
-;;     (add-to-list 'eglot-server-programs '((nxml-mode) . ("java" "-jar" "/Users/ap4624/projects/lemminx/org.eclipse.lemminx/target/org.eclipse.lemminx-uber.jar")))
-;;     (add-to-list 'eglot-server-programs '((java-mode) . (eglot-eclipse-jdt "jdtls")))
-;;     (defclass eglot-eclipse-jdt (eglot-lsp-server) ()
-;;       :documentation "A wrapper for jdtls as that breaks spec")
+(with-system darwin
+  (if use-eglot
+      (after! eglot
+        (add-to-list 'eglot-server-programs '((groovy-mode) . ("/Users/ap4624/projects/groovy-language-server-master/groovy-lsp.sh")))
+        (add-to-list 'eglot-server-programs '((nxml-mode) . ("java" "-jar" "/Users/ap4624/projects/lemminx/org.eclipse.lemminx/target/org.eclipse.lemminx-uber.jar")))
+        (add-to-list 'eglot-server-programs '((java-mode) . (eglot-eclipse-jdt "jdtls")))
+        (defclass eglot-eclipse-jdt (eglot-lsp-server) ()
+          :documentation "A wrapper for jdtls as that breaks spec")
 
-;;     (cl-defmethod eglot-execute-command
-;;       ((_server eglot-eclipse-jdt) (_cmd (eql java.apply.workspaceEdit)) arguments)
-;;       "Eclipse JDT breaks spec and replies with edits as arguments."
-;;       (mapc #'eglot--apply-workspace-edit arguments))))
+        (cl-defmethod eglot-execute-command
+          ((_server eglot-eclipse-jdt) (_cmd (eql java.apply.workspaceEdit)) arguments)
+          "Eclipse JDT breaks spec and replies with edits as arguments."
+          (mapc #'eglot--apply-workspace-edit arguments)))))
 
-;; (with-system darwin
-;;   (use-package! lsp-java
-;;     :config
-;;     (setq lsp-java-import-maven-enabled t
-;;           lsp-java-maven-download-sources t)
-;;     ))
+(with-system darwin
+  (use-package! lsp-java
+    :if use-lsp-mode
+    :config
+    (setq lsp-java-import-maven-enabled t
+          lsp-java-maven-download-sources t)
+    ))
 #+end_src
+
+#+RESULTS:
+
 ** Add more file endings to random modes
 
 #+begin_src emacs-lisp
@@ -563,16 +572,16 @@ Makes a nice fireplace animation
 lsp-mode sets up the file watches kind of weirdly on my mac, try to improve this by ignoring certain things
 
 #+begin_src emacs-lisp
-(with-system darwin
-  (use-package! lsp-mode
-    :config
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.direnv\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]solace\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.terraform\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.vagrant\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]cp-ansible\\'")
-    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.9\\'")
-    (add-hook 'nxml-mode-local-vars-hook #'lsp! 'append)))
+(use-package! lsp-mode
+  :if use-lsp-mode
+  :config
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.direnv\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]solace\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.terraform\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.vagrant\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]cp-ansible\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.9\\'")
+  (add-hook 'nxml-mode-local-vars-hook #'lsp! 'append))
 #+end_src
 ** PlantUML
 the mode offers a function to indent a line but not a whole buffer. It also doesn't react on =.puml= files
@@ -601,6 +610,7 @@ Set firefox as the main browser as that is used everywhere
 #+begin_src emacs-lisp
 (with-system gnu/linux
   (use-package! eglot
+    :if use-eglot
     :config
     (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve")))))
 #+end_src
