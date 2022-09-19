@@ -436,9 +436,13 @@ For whatever reason these don't work correctly on my gentoo WSL system...
   (use-package! lsp-java
     :if use-lsp-mode
     :config
-    (setq lsp-java-import-maven-enabled t
-          lsp-java-maven-download-sources t)
-    ))
+    (setq lsp-java-configuration-runtimes '[(:name "JavaSE-11"
+                                             :path "/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home"
+                                             :default t)])
+    )
+  ;; Always remember risky variables unless told otherwise
+  (advice-add 'risky-local-variable-p :override #'ignore)
+  )
 #+end_src
 
 #+RESULTS:
