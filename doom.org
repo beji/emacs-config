@@ -261,7 +261,7 @@ Default file headers, provided as-is from doom
        ;;scala             ; java, but good
        ;;(scheme +guile)   ; a fully conniving family of lisps
        (:if IS-MAC (sh +lsp +tree-sitter))                ; she sells {ba,z,fi}sh shells on the C xor
-       (:if IS-LINUX sh +tree-sitter)
+       (:if IS-LINUX (sh +tree-sitter))
        ;;sml
        ;;solidity          ; do you need a blockchain? No.
        ;;swift             ; who asked for emoji variables?
