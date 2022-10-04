@@ -266,7 +266,7 @@ Default file headers, provided as-is from doom
        ;;solidity          ; do you need a blockchain? No.
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
-       web               ; the tubes
+       (web +tree-sitter)               ; the tubes
        (yaml +lsp)              ; JSON, but readable
        ;;zig               ; C, but simpler
 
@@ -436,9 +436,16 @@ For whatever reason these don't work correctly on my gentoo WSL system...
   (use-package! lsp-java
     :if use-lsp-mode
     :config
-    (setq lsp-java-configuration-runtimes '[(:name "JavaSE-11"
+    (setq lsp-java-import-maven-enabled t
+          lsp-java-maven-download-sources t
+          ;; the java formatter seems to be really slow
+          lsp-java-format-enabled t
+          lsp-java-format-settings-url  "/Users/ap4624/.config/jdtls/eclipse-java-google-style.xml"
+          lsp-java-configuration-runtimes '[(:name "JavaSE-11"
                                              :path "/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home"
                                              :default t)])
+    ;; (set-formatter! 'intellij '("~/.local/bin/intellij-format.sh" buffer-file-name) :modes '(java-mode ".java"))
+    ;; (setq-hook! 'java-mode-hook +format-with 'intellij)
     )
   ;; Always remember risky variables unless told otherwise
   (advice-add 'risky-local-variable-p :override #'ignore)
@@ -549,14 +556,18 @@ Makes a nice fireplace animation
 *** lsp-sonarlint
 
 #+begin_src emacs-lisp :tangle packages.el
-(with-system darwin
-  (package! lsp-sonarlint)
-  (use-package! lsp-java
-    :config
-    (setq lsp-sonarlint-java-enabled t)
-    :after
-    (require 'lsp-sonarlint)
-    (require 'lsp-sonarlint-java)))
+;; (with-system darwin
+;;   (package! lsp-sonarlint))
+#+end_src
+
+#+begin_src emacs-lisp
+;; (with-system darwin
+;;   (use-package! lsp-java
+;;     :config
+;;     (setq lsp-sonarlint-java-enabled t)
+;;     :after
+;;     (require 'lsp-sonarlint)
+;;     (require 'lsp-sonarlint-java)))
 #+end_src
 
 *** eglot
