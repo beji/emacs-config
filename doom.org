@@ -196,7 +196,7 @@ Default file headers, provided as-is from doom
        ;;rgb               ; creating color strings
        ;;taskrunner        ; taskrunner for all your projects
        ;;terraform         ; infrastructure as code
-       (:if IS-MAC (terraform +lsp))         ; infrastructure as code
+       (terraform +lsp)         ; infrastructure as code
        ;;tmux              ; an API for interacting with tmux
        tree-sitter       ; syntax and parsing, sitting in a tree...
        ;;upload            ; map local to remote projects via ssh/ftp
@@ -244,7 +244,7 @@ Default file headers, provided as-is from doom
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
-       ;;nix               ; I hereby declare "nix geht mehr!"
+       (:if IS-LINUX (nix +lsp +tree-sitter))               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org +pomodoro +roam2)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
@@ -267,11 +267,12 @@ Default file headers, provided as-is from doom
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        web               ; the tubes
-       (yaml +lsp)              ; JSON, but readable
+       (:if IS-MAC (yaml +lsp))              ; JSON, but readable
+       (:if IS-LINUX yaml)
        ;;zig               ; C, but simpler
 
        :email
-       (mu4e +org)
+       ;;(mu4e +org)
        ;;notmuch
        ;;(wanderlust +gmail)
 
@@ -357,32 +358,32 @@ Disable auto formatting for `yaml`, it conflicts with ansible-lint
 
 ** Email configuration stuff
 #+begin_src emacs-lisp
-(with-system gnu/linux
-  ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
-  (use-package! mu4e
-    :config
-    (set-email-account! "bjoernerlwein.de"
-                        '((mu4e-sent-folder       . "/bjoernerlweinde/Sent")
-                          (mu4e-drafts-folder     . "/bjoernerlweinde/Drafts")
-                          (mu4e-trash-folder      . "/bjoernerlweinde/Trash")
-                          (mu4e-refile-folder     . "/bjoernerlweinde/All Mail")
-                          (smtpmail-smtp-user     . "bjoern@bjoernerlwein.de")
-                          (smtpmail-smtp-server   . "hosted.mailcow.de")
-                          (smtpmail-servers-requiring-authorization . ".+")
-                          (starttls-use-gnutls    . t)
-                          (starttls-gnutls-program . "gnutls-cli")
-                          (starttls-extra-arguments . nil)
-                          (smtpmail-stream-type .   ssl)
-                          (smtpmail-smtp-service  . 465)
-                          (user-mail-address      . "bjoern@bjoernerlwein.de")    ;; only needed for mu < 1.4
-                          (mu4e-compose-signature . "\nBjörn Erlwein"))
-                        t)
-    )
-  (defun zz/mu4e-mark-all-for-read ()
-    "Mark all elements in a mu4e list"
-    (interactive)
-    (while (not (eobp))
-      (mu4e-headers-mark-for-read))))
+;; (with-system gnu/linux
+;;   ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
+;;   (use-package! mu4e
+;;     :config
+;;     (set-email-account! "bjoernerlwein.de"
+;;                         '((mu4e-sent-folder       . "/bjoernerlweinde/Sent")
+;;                           (mu4e-drafts-folder     . "/bjoernerlweinde/Drafts")
+;;                           (mu4e-trash-folder      . "/bjoernerlweinde/Trash")
+;;                           (mu4e-refile-folder     . "/bjoernerlweinde/All Mail")
+;;                           (smtpmail-smtp-user     . "bjoern@bjoernerlwein.de")
+;;                           (smtpmail-smtp-server   . "hosted.mailcow.de")
+;;                           (smtpmail-servers-requiring-authorization . ".+")
+;;                           (starttls-use-gnutls    . t)
+;;                           (starttls-gnutls-program . "gnutls-cli")
+;;                           (starttls-extra-arguments . nil)
+;;                           (smtpmail-stream-type .   ssl)
+;;                           (smtpmail-smtp-service  . 465)
+;;                           (user-mail-address      . "bjoern@bjoernerlwein.de")    ;; only needed for mu < 1.4
+;;                           (mu4e-compose-signature . "\nBjörn Erlwein"))
+;;                         t)
+;;     )
+;;   (defun zz/mu4e-mark-all-for-read ()
+;;     "Mark all elements in a mu4e list"
+;;     (interactive)
+;;     (while (not (eobp))
+;;       (mu4e-headers-mark-for-read))))
 #+end_src
 
 ** Mac OS configurations
