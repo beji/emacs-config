@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: terraform-aws-iam-policy
+# key: terraform-aws-iam-policy
+# --
+data "aws_iam_policy_document" "$1" {
+  statement {
+  }
+}
+
+resource "aws_iam_policy" "$1" {
+  name = "$2"
+  policy = data.aws_iam_policy_document.$1.json
+}
