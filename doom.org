@@ -244,7 +244,7 @@ Default file headers, provided as-is from doom
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
-       (:if IS-LINUX (nix +lsp +tree-sitter))               ; I hereby declare "nix geht mehr!"
+       (nix +lsp +tree-sitter)               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org +pomodoro +roam2)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
