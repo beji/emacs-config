@@ -250,7 +250,7 @@ Default file headers, provided as-is from doom
        ;;php               ; perl's insecure younger brother
        (:if IS-MAC plantuml)          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
-       ;;python            ; beautiful is better than ugly
+       (:if IS-MAC (python +lsp +tree-sitter))            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
