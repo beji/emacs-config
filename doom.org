@@ -441,10 +441,7 @@ For whatever reason these don't work correctly on my gentoo WSL system...
           lsp-java-maven-download-sources t
           ;; the java formatter seems to be really slow
           lsp-java-format-enabled t
-          lsp-java-format-settings-url  "/Users/ap4624/.config/jdtls/eclipse-java-google-style.xml"
-          lsp-java-configuration-runtimes '[(:name "JavaSE-11"
-                                             :path "/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home"
-                                             :default t)])
+          lsp-java-format-settings-url  "/Users/ap4624/.config/jdtls/eclipse-java-google-style.xml")
     ;; (set-formatter! 'intellij '("~/.local/bin/intellij-format.sh" buffer-file-name) :modes '(java-mode ".java"))
     ;; (setq-hook! 'java-mode-hook +format-with 'intellij)
     )
