@@ -573,18 +573,14 @@ Makes a nice fireplace animation
 ;;     (require 'lsp-sonarlint-java)))
 #+end_src
 
-*** eglot
+*** protobuf
+
 #+begin_src emacs-lisp :tangle packages.el
-;; (with-system darwin
-;;   (package! eglot :recipe (:host github :repo "beji/eglot" :branch "fix-jdtls-java-apply-workspaceedit")    )
-;;   (unpin! eglot))
+(package! protbuf-mode
+  :recipe (:host github :repo "protocolbuffers/protobuf"
+           :files ("editors/protobuf-mode.el")))
 #+end_src
 
-*** Gentoo ebuilds
-#+begin_src emacs-lisp :tangle packages.el
-(with-system gnu/linux
-  (package! ebuild-mode))
-#+end_src
 ** Config for lsp-mode
 
 lsp-mode sets up the file watches kind of weirdly on my mac, try to improve this by ignoring certain things
