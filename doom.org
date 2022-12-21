@@ -356,6 +356,11 @@ Disable auto formatting for `yaml`, it conflicts with ansible-lint
 (setq! use-eglot (not (eq (locate-library "eglot") nil)))
 #+end_src
 
+Doom theme
+#+begin_src emacs-lisp
+(setq! doom-theme 'doom-nord-aurora)
+#+end_src
+
 ** Email configuration stuff
 #+begin_src emacs-lisp
 ;; (with-system gnu/linux
