@@ -187,7 +187,7 @@ Default file headers, provided as-is from doom
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
-       lsp                 ; infrastructure as code
+       (lsp +eglot)                 ; infrastructure as code
        magit             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        pass              ; password manager for nerds
@@ -429,7 +429,7 @@ For whatever reason these don't work correctly on my gentoo WSL system...
       (after! eglot
         (add-to-list 'eglot-server-programs '((groovy-mode) . ("/Users/ap4624/projects/groovy-language-server-master/groovy-lsp.sh")))
         (add-to-list 'eglot-server-programs '((nxml-mode) . ("java" "-jar" "/Users/ap4624/projects/lemminx/org.eclipse.lemminx/target/org.eclipse.lemminx-uber.jar")))
-        (add-to-list 'eglot-server-programs '((java-mode) . (eglot-eclipse-jdt "jdtls")))
+        (add-to-list 'eglot-server-programs '((java-mode) . (eglot-eclipse-jdt "jdtls-wrapper")))
         (defclass eglot-eclipse-jdt (eglot-lsp-server) ()
           :documentation "A wrapper for jdtls as that breaks spec")
 
@@ -595,6 +595,7 @@ lsp-mode sets up the file watches kind of weirdly on my mac, try to improve this
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.vagrant\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]cp-ansible\\'")
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.9\\'")
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]python3\\.10\\'")
   (add-hook 'nxml-mode-local-vars-hook #'lsp! 'append))
 #+end_src
 ** PlantUML
@@ -628,6 +629,47 @@ Set firefox as the main browser as that is used everywhere
     :config
     (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve")))))
 #+end_src
+
+Eglot uses project.el for discovery. This, in general, sets up way too much file watches in a monorepo. This bridges project.el and projectile.
+Many thanks to the source at https://github.com/joaotavora/eglot/issues/697#issuecomment-849942257
+
+#+begin_src emacs-lisp
+(defun zz/projectile-project-find-function (dir)
+  (let ((root (projectile-project-root dir)))
+    (and root (cons 'my/projectile root))))
+
+(cl-defmethod project-root ((pr (head my/projectile)))
+  (cdr pr))
+
+(cl-defmethod project-files ((pr (head my/projectile)) &optional _dirs)
+  (let ((root (cdr pr)))
+    (mapcar
+     (lambda (file)
+       (concat root file))
+     (projectile-project-files root))))
+
+(cl-defmethod project-ignores ((pr (head my/projectile)) _dir)
+  (let ((default-directory (cdr pr)))
+    (projectile-patterns-to-ignore)))
+
+(if use-eglot
+    (with-eval-after-load 'project
+      (add-to-list 'project-find-functions 'zz/projectile-project-find-function)))
+#+end_src
+
+** Clean up file handles
+lsp-mode might open too many handles for macos, no real solution except removing them.
+
+#+begin_src emacs-lisp
+(defun zz/file-notify-rm-all-watches ()
+  "Remove all existing file notification watches from Emacs."
+  (interactive)
+  (maphash
+   (lambda (key _value)
+     (file-notify-rm-watch key))
+   file-notify-descriptors))
+#+end_src
+
 * Org mode
 ** setup folders
 Set default directories for =org=, =org-agenda= and =org-roam=.
