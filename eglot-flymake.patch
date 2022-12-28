@@ -1,0 +1,27 @@
+diff --git a/modules/tools/lsp/autoload/flycheck-eglot.el b/modules/tools/lsp/autoload/flycheck-eglot.el
+index c0568f59e..a16bdb02d 100644
+--- a/modules/tools/lsp/autoload/flycheck-eglot.el
++++ b/modules/tools/lsp/autoload/flycheck-eglot.el
+@@ -39,9 +39,7 @@ CALLBACK is the function that we need to call when we are done, on all the error
+            :buffer (current-buffer)
+            :filename (buffer-file-name)))))
+     (setq +lsp--flycheck-eglot--current-errors
+-          (mapcar #'flymake-diag->flycheck-err diags))
+-    ;; Call Flycheck to update the diagnostics annotations
+-    (flycheck-buffer-deferred)))
++          (mapcar #'flymake-diag->flycheck-err diags))))
+
+ (defun +lsp--flycheck-eglot-available-p ()
+   (bound-and-true-p eglot--managed-mode))
+@@ -62,10 +60,7 @@ CALLBACK is the function that we need to call when we are done, on all the error
+         (unless (equal current-checker 'eglot)
+           (flycheck-add-next-checker 'eglot current-checker)))
+       (flycheck-add-mode 'eglot major-mode)
+-      (flycheck-mode 1)
+-      ;; Call flycheck on initilization to make sure to display initial
+-      ;; errors
+-      (flycheck-buffer-deferred))))
++      (flycheck-mode 1))))
+
+ (after! flymake
+   (when (and
