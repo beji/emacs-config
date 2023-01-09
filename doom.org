@@ -314,7 +314,7 @@ First set up some general user info stuff.
 #+begin_src emacs-lisp
 (with-system darwin
              (setq user-full-name "Björn Erlwein"
-                   user-mail-address "bjoern.erlwein@empiriecom.com"))
+                   user-mail-address "bjoern.erlwein@huk-coburg.de"))
 (with-system gnu/linux
              (setq user-full-name "Björn Erlwein"
                    user-mail-address "bjoernerlwein@gmail.com"))
