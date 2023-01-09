@@ -623,11 +623,10 @@ Set firefox as the main browser as that is used everywhere
 ** Extend eglot lsp definitions
 
 #+begin_src emacs-lisp
-(with-system gnu/linux
-  (use-package! eglot
-    :if use-eglot
-    :config
-    (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve")))))
+(use-package! eglot
+  :if use-eglot
+  :config
+  (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve"))))
 #+end_src
 
 Eglot uses project.el for discovery. This, in general, sets up way too much file watches in a monorepo. This bridges project.el and projectile.
