@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: plantuml-base
+# key: plantuml-base
+# condition: t
+# --
+
+@startuml
+left to right direction
+!include <C4/C4_Container>
+
+header $1
+
+$2
+
+@enduml
