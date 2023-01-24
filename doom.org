@@ -173,8 +173,8 @@ Default file headers, provided as-is from doom
 
        :checkers
        syntax              ; tasing you for every semicolon you forget
-       ;;(spell +flyspell) ; tasing you for misspelling mispelling
-       ;;grammar           ; tasing grammar mistake every you make
+       (spell +flyspell) ; tasing you for misspelling mispelling
+       grammar           ; tasing grammar mistake every you make
 
        :tools
        ansible
@@ -364,6 +364,27 @@ Doom theme
   (setq! doom-theme 'doom-one))
 #+end_src
 
+** Spell- and grammarchecking
+
+Langtool defaults to en-US, de-DE should be the default
+
+#+begin_src emacs-lisp
+(setq! langtool-default-language "de-DE")
+#+end_src
+
+Add custom functions to change languages around
+
+#+begin_src emacs-lisp
+(defun zz/dict-english ()
+  (interactive)
+  (setq langtool-default-language "en-US")
+  (ispell-change-dictionary "english"))
+(defun zz/dict-german ()
+  (interactive)
+  (setq langtool-default-language "de-DE")
+  (ispell-change-dictionary "german"))
+#+end_src
+
 ** Email configuration stuff
 #+begin_src emacs-lisp
 ;; (with-system gnu/linux
@@ -430,7 +451,7 @@ For whatever reason these don't work correctly on my gentoo WSL system...
 (with-system darwin
   (if use-eglot
       (after! eglot
-        (add-to-list 'eglot-server-programs '((groovy-mode) . ("/Users/ap4624/projects/groovy-language-server-master/groovy-lsp.sh")))
+        (add-to-list 'eglot-server-programs '((groovy-mode) . ("groovy-language-server")))
         (add-to-list 'eglot-server-programs '((nxml-mode) . ("java" "-jar" "/Users/ap4624/projects/lemminx/org.eclipse.lemminx/target/org.eclipse.lemminx-uber.jar")))
         (add-to-list 'eglot-server-programs '((java-mode) . (eglot-eclipse-jdt "jdtls-wrapper")))
         (defclass eglot-eclipse-jdt (eglot-lsp-server) ()
