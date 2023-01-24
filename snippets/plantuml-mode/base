@@ -2,10 +2,10 @@
 # name: plantuml-base
 # key: plantuml-base
 # condition: t
+# expand-env: ((yas-indent-line 'fixed))
 # --
 
 @startuml
-left to right direction
 !include <C4/C4_Container>
 
 header $1
