@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: makefile-base
+# key: makefile-base
+# condition: t
+# --
+ROOT := ..
+include $(ROOT)/include.mk
+INCLUDE
+
+PHONY+=all
+all:
+    echo "FILL ME"
+
+.PHONY: $(PHONY)
