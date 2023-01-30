@@ -323,7 +323,8 @@ First set up some general user info stuff.
 The font I currently like.
 
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Hack" :size 13))
+;;(setq doom-font (font-spec :family "Hack" :size 13))
+(setq doom-font (font-spec :family "Berkeley Mono" :size 13))
 #+end_src
 
 Enable line numbers everywhere.
