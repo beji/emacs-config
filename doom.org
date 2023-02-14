@@ -795,12 +795,10 @@ A custom command to look at issues assigned to me.
 (with-system darwin
              (org-add-agenda-custom-command
               '("c" "Jira issues assigned to me"
-                ((ejira-jql "assignee = currentUser() AND resolution = Unresolved order by updated DESC"
+                ((ejira-jql "assignee = currentUser() AND resolution = Unresolved AND status != Geschlossen order by updated DESC"
                             ((org-agenda-overriding-header "Assigned to me")))
-                 (ejira-jql "reporter = currentUser() AND resolution = Unresolved order by updated DESC"
-                            ((org-agenda-overriding-header "Created by me")))
-                 (ejira-jql "domain =\"Order\"  and  issuetype = \"Daily Business\" and resolution = Unresolved ORDER BY created DESC"
-                            ((org-agenda-overriding-header "Daily business tickets")))))))
+                 (ejira-jql "reporter = currentUser() AND resolution = Unresolved AND status != Geschlossen order by updated DESC"
+                            ((org-agenda-overriding-header "Created by me")))))))
 #+end_src
 
 *** How to push =org-clock= stuff to Jira.
