@@ -679,6 +679,12 @@ Many thanks to the source at https://github.com/joaotavora/eglot/issues/697#issu
 (if use-eglot
     (with-eval-after-load 'project
       (add-to-list 'project-find-functions 'zz/projectile-project-find-function)))
+
+(after! eglot
+  :if use-eglot
+  :config
+  (add-to-list 'eglot-server-programs
+               '(typescript-tsx-mode . ("typescript-language-server" "--stdio"))))
 #+end_src
 
 ** Clean up file handles
