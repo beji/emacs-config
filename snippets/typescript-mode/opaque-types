@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: opaque-types
+# uuid:
+# key: opaque-types
+# condition: t
+# --
+
+type Opaque<_WrappedType, Identifier> = {
+    readonly __identifier: Identifier
+}
+
+export type OpaqueString<Identifier> = Opaque<string, Identifier>;
+export type Username = OpaqueString<"username">;
+
+export const wrap = <WrappedType, Wrapper extends Opaque<WrappedType, unknown>>(o: WrappedType): Wrapper => o as never as Wrapper;
+export const unwrap = <WrappedType, Wrapper extends Opaque<WrappedType, unknown>>(o: Wrapper): WrappedType => o as never as WrappedType;
+
+export const wrapString = <T extends OpaqueString<unknown>>(o: string): T => wrap(o);
+export const unwrapToString = <T extends OpaqueString<unknown>>(o: T): string => unwrap(o);

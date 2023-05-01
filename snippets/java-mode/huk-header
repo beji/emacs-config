@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: HUK Copyright header
+# key: hukheader
+# condition: t
+# expand-env: ((yas-indent-line 'fixed))
+# --
+
+/**
+ * $2
+ *
+ * $1 Copyright (c) 2023 HUK-COBURG. All Rights Reserved.
+ */
