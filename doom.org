@@ -696,6 +696,12 @@ lsp-mode might open too many handles for macos, no real solution except removing
 
 ** Fixes
 None right now
+** Custom functions
+#+begin_src emacs-lisp
+(defun zz/insert-uuid ()
+  (interactive)
+  (downcase (shell-command "uuidgen" t)))
+#+end_src
 * Org mode
 ** setup folders
 Set default directories for =org=, =org-agenda= and =org-roam=.
