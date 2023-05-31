@@ -427,12 +427,13 @@ This also sets the fullscreen mode to native to support the macos fullscreen stu
 
 #+begin_src emacs-lisp
 (with-system darwin
-             (setq ns-right-option-modifier 'none ;; default emacs
-                   ns-right-command-modifier 'none ;; default emacs
-                   mac-right-option-modifier 'none ;; emacs mac port
-                   mac-right-option-modifier 'none ;; emacs mac port
-                   mac-option-modifier 'meta
-                   ns-use-native-fullscreen t))
+  (setq ns-right-option-modifier 'none ;; default emacs
+        ns-right-command-modifier 'none ;; default emacs
+        mac-right-option-modifier 'none ;; emacs mac port
+        mac-right-option-modifier 'none ;; emacs mac port
+        mac-option-modifier 'meta
+        ns-use-native-fullscreen t)
+  (add-to-list 'default-frame-alist '(undecorated-round . t)))
 #+end_src
 
 ** Linux/Gentoo configuration
