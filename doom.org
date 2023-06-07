@@ -526,22 +526,6 @@ Provides syntax highlights for varnish.
   (add-to-list 'auto-mode-alist (cons (purecopy "\\.vtc\\'") 'vcl-mode)))
 #+end_src
 
-*** add-node-modules-path
-
-Automatically add the =node_modules= folder to =PATH=.
-
-#+begin_src emacs-lisp :tangle packages.el
-(package! add-node-modules-path)
-#+end_src
-
-#+begin_src emacs-lisp
-(add-hook! web-mode 'add-node-modules-path)
-(add-hook! js2-mode 'add-node-modules-path)
-(add-hook! typescript-mode 'add-node-modules-path)
-(with-system gnu/linux
-  (add-hook! yaml-mode 'add-node-modules-path))
-#+end_src
-
 *** prettier-js
 
 Prettier integration on save
