@@ -685,7 +685,9 @@ Many thanks to the source at https://github.com/joaotavora/eglot/issues/697#issu
   :if use-eglot
   :config
   (add-to-list 'eglot-server-programs
-               '(typescript-tsx-mode . ("typescript-language-server" "--stdio"))))
+               '(typescript-tsx-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '(nix-mode . ("nil"))))
 #+end_src
 
 ** Clean up file handles
