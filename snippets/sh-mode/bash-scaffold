@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: Bash script scaffold
+# uuid: e7d3f06d-5d2b-42e4-98e5-0b71951ee5f5
+# key: scaffold
+# condition: t
+# --
+
+#!/usr/bin/env bash
+
+function finish {
+ # cleanup code goes here
+}
+trap finish EXIT
+
+if [ -n "\$DEBUG" ]; then
+	DEBUGFLAG="x"
+else
+	DEBUGFLAG=""
+fi
+
+set -euo"\$\{DEBUGFLAG\}" pipefail
