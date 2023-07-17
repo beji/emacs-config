@@ -246,7 +246,7 @@ Default file headers, provided as-is from doom
        ;;nim               ; python + lisp at the speed of c
        (nix +lsp +tree-sitter)               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +pomodoro +roam2)               ; organize your plain life in plain text
+       (org +pomodoro +roam2 +passwords)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        (:if IS-MAC plantuml)          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
@@ -890,4 +890,14 @@ non-nil."
           org-pomodoro-keep-killed-pomodoro-time t
           org-pomodoro-clock-break t
           org-pomodoro-long-break-length 10)))
+#+end_src
+
+** password manager
+
+Password management in org, powered by [[https://github.com/alfaromurillo/org-passwords.el][org-passwords.el]], what could possibly go wrong?
+
+#+begin_src emacs-lisp
+(use-package! org-passwords
+  :config
+  (setq org-passwords-file "~/.org-password/store.org.gpg"))
 #+end_src
