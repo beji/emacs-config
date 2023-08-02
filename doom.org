@@ -695,6 +695,17 @@ None right now
   (interactive)
   (downcase (shell-command "uuidgen" t)))
 #+end_src
+
+** Magit
+
+The line length for the summary is a bit short
+
+#+begin_src emacs-lisp
+(use-package! magit
+  :config
+  (setq git-commit-summary-max-length 120))
+#+end_src
+
 * Org mode
 ** setup folders
 Set default directories for =org=, =org-agenda= and =org-roam=.
