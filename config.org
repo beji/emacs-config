@@ -551,6 +551,79 @@ Increase performance of eglot by improving idle time and disabling logging
     (fset #'jsonrpc--log-event #'ignore))
 #+end_src
 
+** Bash
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/bash.el")
+#+end_src
+
+No package to install here, bash-mode already exists.
+But we do have to map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/bash.el
+  (use-package treesit
+    :config
+    (push '(bash-mode . bash-ts-mode) major-mode-remap-alist))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/bash.el
+					  ;(use-package treesit
+					  ;:config
+					  ;(push '(bash "https://github.com/tree-sitter/tree-sitter-bash") treesit-language-source-alist))
+#+end_src
+
+** Makefile
+
+Not sure if this even does something, as =makefile-ts-mode= doesn't seem to exist?
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/make.el")
+#+end_src
+
+No package to install here, makefile-mode already exists.
+But we do have to map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/make.el
+  (use-package treesit
+    :config
+    (push '(makefile-mode . makefile-ts-mode) major-mode-remap-alist))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/make.el
+  (use-package treesit
+    :config
+    (push '(make "https://github.com/alemuller/tree-sitter-make") treesit-language-source-alist))
+#+end_src
+
+** YAML
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/yaml.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/yaml.el
+  (use-package yaml-mode
+    :ensure t)
+#+end_src
+
+
+But we do have to map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/yaml.el
+  (use-package treesit
+    :config
+    (push '(yaml-mode . yaml-ts-mode) major-mode-remap-alist))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/yaml.el
+  (use-package treesit
+    :config
+    (push '(yaml "https://github.com/ikatyang/tree-sitter-yaml") treesit-language-source-alist))
+#+end_src
+
 ** Typescript
 #+begin_src emacs-lisp :tangle init.el
   (zz/load-module "modules/typescript.el")
@@ -568,8 +641,7 @@ Map the major mode to treesitter mode
 #+begin_src emacs-lisp :tangle modules/typescript.el
   (use-package treesit
     :config
-    (add-to-list 'major-mode-remap-alist
-		 '((typescript-mode . typescript-ts-mode))))
+    (push '(typescript-mode . typescript-ts-mode) major-mode-remap-alist))
 #+end_src
 
 Add the treesitter grammar
@@ -597,8 +669,7 @@ Map the major mode to treesitter mode
 #+begin_src emacs-lisp :tangle modules/rust.el
   (use-package treesit
     :config
-    (add-to-list 'major-mode-remap-alist
-		 '((rust-mode . rust-ts-mode))))
+    (push '(rust-mode . rust-ts-mode) major-mode-remap-alist))
 #+end_src
 
 Add the treesitter grammar
@@ -619,8 +690,7 @@ But we do have to map the major mode to treesitter mode
 #+begin_src emacs-lisp :tangle modules/java.el
   (use-package treesit
     :config
-    (add-to-list 'major-mode-remap-alist
-		 '((java-mode . java-ts-mode))))
+    (push '(java-mode . java-ts-mode) major-mode-remap-alist))
 #+end_src
 
 Add the treesitter grammar
