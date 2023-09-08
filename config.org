@@ -609,6 +609,28 @@ Add the treesitter grammar
     (push '(rust "https://github.com/tree-sitter/tree-sitter-rust" "master" "src") treesit-language-source-alist))
 #+end_src
 
+** Java
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/java.el")
+#+end_src
+
+No package to install here, java-mode already exists.
+But we do have to map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/java.el
+  (use-package treesit
+    :config
+    (add-to-list 'major-mode-remap-alist
+		 '((java-mode . java-ts-mode))))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/java.el
+  (use-package treesit
+    :config
+    (push '(java "https://github.com/tree-sitter/tree-sitter-java") treesit-language-source-alist))
+#+end_src
+
 ** Auto format
 #+begin_src emacs-lisp :tangle init.el
   (zz/load-module "modules/format.el")
