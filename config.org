@@ -658,13 +658,6 @@ Add the treesitter grammar
   (zz/load-module "modules/rust.el")
 #+end_src
 
-#+begin_src emacs-lisp :tangle modules/rust.el
-  (use-package rustic
-    :ensure t
-    :config
-    (setq rustic-lsp-client 'eglot))
-#+end_src
-
 Map the major mode to treesitter mode
 #+begin_src emacs-lisp :tangle modules/rust.el
   (use-package treesit
