@@ -204,13 +204,13 @@ Ensure the package is installed
     (setq org-directory "~/Documents/org/"))
 #+end_src
 
-Add org-roam
+Add org-roam and set up the base directory
 
 #+begin_src emacs-lisp :tangle modules/org-mode.el
   (use-package org-roam
     :ensure t
     :config
-    (setq org-roam-directory "~/Documents/org-roam/"))
+    (setq org-roam-directory "~/notes"))
 #+end_src
 
 * VIM Emulation
