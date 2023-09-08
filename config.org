@@ -1,0 +1,672 @@
+:DOC-CONFIG:
+# tangle by default to init.el, the most common case
+#+property: header-args :mkdirp yes :comments no
+#+startup: fold
+:END:
+
+#+title: Emacs Config
+
+* How do I build this?
+
+#+begin_src emacs-lisp :tangle no :results output silent
+  (org-babel-tangle)
+#+end_src
+
+* Early init
+The early init goes into =early-init.el=. It runs before =init.el= and is used to set up some startup stuff
+
+** Increase startup speed
+=gc-cons-threshold= reduces garbage collection runs, this should improve the user experience but requires more memory
+
+#+begin_src emacs-lisp :tangle early-init.el
+  (setq gc-cons-threshold 10000000)
+#+end_src
+
+** Decrease spam
+Remove obsolete files from the =byte-compile-warnings=, this generally doesn't matter as the files will get compiled.
+
+#+begin_src emacs-lisp :tangle early-init.el
+  (setq byte-compile-warnings '(not obsolete))
+#+end_src
+
+Remove messages about compilation, none of that matters.
+
+#+begin_src emacs-lisp :tangle early-init.el
+  (setq warning-suppress-log-types '((comp) (bytecomp)))
+  (setq native-comp-async-report-warnings-errors 'silent)
+#+end_src
+
+** Remove UI clutter
+
+Disable the tool bar and the menu bar
+
+#+begin_src emacs-lisp :tangle early-init.el
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+#+end_src
+
+** UI Improvements
+
+#+begin_src emacs-lisp :tangle early-init.el
+  (setq default-frame-alist '((fullscreen . maximized)
+
+			      ;; You can turn off scroll bars by uncommenting these lines:
+			      (vertical-scroll-bars . nil)
+			      (horizontal-scroll-bars . nil)
+
+			      ;; Setting the face in here prevents flashes of
+			      ;; color as the theme gets activated
+			      (background-color . "#000000")
+			      (foreground-color . "#FFFFFF")
+			      (ns-appearance . dark)
+			      (ns-transparent-titlebar . t)))
+#+end_src
+
+* Define some useful constants
+#+begin_src emacs-lisp :tangle init.el
+  (defconst IS-MAC      (eq system-type 'darwin))
+  (defconst IS-LINUX    (memq system-type '(gnu gnu/linux gnu/kfreebsd berkeley-unix)))
+  (defconst IS-WINDOWS  (memq system-type '(cygwin windows-nt ms-dos)))
+  (defconst IS-BSD      (memq system-type '(darwin berkeley-unix gnu/kfreebsd)))
+#+end_src
+
+* Helper functions to load modules
+
+** Load modules for the fake module system
+
+#+begin_src emacs-lisp :tangle init.el
+  (defun zz/load-module (fpath)
+    "Loads a custom module in the users emacs directory"
+    (load-file (expand-file-name fpath user-emacs-directory)))
+#+end_src
+
+** Remove trailing whitespace from the buffers lines
+#+begin_src emacs-lisp :tangle init.el
+  (defun zz/rm-trailing-spaces ()
+    "Remove spaces at ends of all lines"
+    (interactive)
+    (save-excursion
+      (let ((current (point)))
+	(goto-char 0)
+	(while (re-search-forward "[ \t]+$" nil t)
+	  (replace-match "" nil nil))
+	(goto-char current))))
+#+end_src
+
+Run that on every save
+#+begin_src emacs-lisp :tangle init.el
+  (add-hook 'after-save-hook 'zz/rm-trailing-spaces)
+#+end_src
+* Set up use-package
+
+=use-package= only uses GNU ELPA by default, enable MELPA as well
+
+#+begin_src emacs-lisp :tangle init.el
+  (with-eval-after-load 'package
+    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+#+end_src
+
+** Automated package updates
+
+This will automatically update packages every =4= days
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/auto-update.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/auto-update.el
+  (use-package auto-package-update
+    :ensure t
+    :config
+    (setq auto-package-update-delete-old-versions t
+	  auto-package-update-interval 4)
+    (auto-package-update-maybe))
+#+end_src
+
+* Configure backup files
+Emacs will create backup files by default. These usually litter a project. Create these in a predefined directory
+
+#+begin_src emacs-lisp :tangle init.el
+  (defun zz/backup-file-path (fpath)
+    "Moves emacs backup files to a predefined directory"
+    (let* ((backupRootDir "~/.emacs.d/emacs-backup/")
+	   (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path
+	   (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
+      (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+      backupFilePath))
+#+end_src
+
+Enable the backup path function
+
+#+begin_src emacs-lisp :tangle init.el
+  (setq make-backup-file-name-function 'zz/backup-file-path)
+#+end_src
+
+* Theming
+
+#+begin_src emacs-lisp :tangle init.el
+  (use-package doom-themes
+    :ensure t
+    :config
+    (load-theme 'doom-nord-aurora t)
+    (doom-themes-org-config))
+
+  (set-face-attribute 'default t :font "Hack 13")
+#+end_src
+
+* Enable line numbers
+#+begin_src emacs-lisp :tangle init.el
+  (use-package emacs
+    :hook (prog-mode . display-line-numbers-mode))
+#+end_src
+
+* Modeline
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/modeline.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/modeline.el
+  (use-package doom-modeline
+    :ensure t
+    :hook (after-init . doom-modeline-mode))
+#+end_src
+
+* which-key
+
+Displays key bindings for incomplete commands. Really useful for discovery
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/which-key.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/which-key.el
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode))
+#+end_src
+
+* Org Mode
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/org-mode.el")
+#+end_src
+
+Set some basic variables
+#+begin_src emacs-lisp :tangle modules/org-mode.el
+  (setq org-directory "~/Documents/org/")
+  (setq org-roam-directory "~/Documents/org-roam/")
+  (setq org-roam-index-file "~/Documents/org-roam/index.org")
+#+end_src
+
+Ensure the package is installed
+#+begin_src emacs-lisp :tangle modules/org-mode.el
+  (use-package org
+    :ensure t)
+#+end_src
+
+Add org-roam
+
+#+begin_src emacs-lisp :tangle modules/org-mode.el
+  (use-package org-roam
+    :ensure t)
+#+end_src
+
+* VIM Emulation
+Emacs is nice. VIM is nice. Insert "why not both" meme here.
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/vim.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/vim.el
+  (use-package evil
+    :ensure t
+    :init
+    (setq
+     evil-respect-visual-line-mode t
+     evil-want-keybinding nil)
+    :config
+    (evil-mode))
+#+end_src
+
+* Some nice shortcuts
+
+**NOTE**: This requires the vim module to be loaded!
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/shortcuts.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/shortcuts.el
+  (use-package evil-leader
+    :ensure t
+    :after evil
+    :init
+    (global-evil-leader-mode)
+    :config
+    (evil-leader/set-leader "<SPC>")
+    (evil-leader/set-key
+      "<SPC>" 'project-switch-project
+      "." 'project-find-file
+      "g" 'magit-status
+      "s" 'consult-line
+      "t s" 'zz/flyspell-toggle
+      "b k" 'kill-current-buffer
+      "n r f" 'org-roam-node-find
+      "n r i" 'org-roam-node-insert))
+#+end_src
+
+* Minibuffers
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/minibuffers.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/minibuffers.el
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode))
+  (use-package vertico-directory
+    :after vertico)
+  (use-package marginalia
+    :ensure t
+    :config
+    (marginalia-mode))
+  (use-package orderless
+    :ensure t
+    :config
+    (setq completion-styles '(orderless)))
+  (use-package consult
+    :ensure t)
+#+end_src
+
+* Eshell enhancements
+Eshell is already pretty nice, it just needs some better syntax highlighting
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/eshell.el")
+#+end_src
+
+Install the package and enable it for all Eshell buffers
+
+#+begin_src emacs-lisp :tangle modules/eshell.el
+  (use-package eshell-syntax-highlighting
+    :ensure t
+    :hook (eshell-mode . eshell-syntax-highlighting-mode))
+#+end_src
+
+* Popup code completion
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/completion.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/completion.el
+  (use-package corfu
+    :ensure t
+    :config
+    (setq
+     corfu-auto t
+     corfu-quit-no-match 'separator)
+    :init
+    (global-corfu-mode)
+    :bind
+    (:map corfu-map
+	  ("SPC" . corfu-insert-separator)
+	  ("C-n" . corfu-next)
+	  ("C-n" . corfu-previous)))
+#+end_src
+
+Display candidate documentation or source in a popup next to the candidate menu.
+#+begin_src emacs-lisp :tangle modules/completion.el
+  (use-package corfu-popupinfo
+    :after corfu
+    :hook (corfu-mode . corfu-popupinfo-mode)
+    :custom
+    (corfu-popupinfo-delay '(0.25 . 0.1))
+    (corfu-popupinfo-hide nil)
+    :config
+    (corfu-popupinfo-mode))
+#+end_src
+
+Make corfu popup come up in terminal overlay
+#+begin_src emacs-lisp :tangle modules/completion.el
+  (use-package corfu-terminal
+    :if (not (display-graphic-p))
+    :ensure t
+    :config
+    (corfu-terminal-mode))
+#+end_src
+
+Pretty icons for corfu
+#+begin_src emacs-lisp :tangle modules/completion.el
+  (use-package kind-icon
+    :if (display-graphic-p)
+    :ensure t
+    :after corfu
+    :custom
+    (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+    :config
+    (setq kind-icon-use-icons nil) ; disable svg icons as they are fetched one by one, which is kind of stupid
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+#+end_src
+
+* Projects
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/projects.el")
+#+end_src
+
+Extend the markers for the automatic project detection
+#+begin_src emacs-lisp :tangle modules/projects.el
+  (use-package project
+    :config
+    (setq project-vc-extra-root-markers '(".projectile" ".idea" ".git")))
+#+end_src
+
+* Better search
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/search.el")
+#+end_src
+
+Consult provides a nicer search, use that and rebind the standard keys to it
+#+begin_src emacs-lisp :tangle modules/search.el
+  (use-package consult
+    :ensure t
+    :bind (
+	   ("C-x b" . consult-buffer)
+	   ("C-s" . consult-line)))
+#+end_src
+
+* Git
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/git.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/git.el
+  (use-package magit
+    :ensure t
+    :bind (
+	   ("C-c g" . magit-status)))
+#+end_src
+
+* Direnv integration
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/direnv.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/direnv.el
+  (use-package envrc
+    :ensure t
+    :init
+    (envrc-global-mode))
+#+end_src
+
+* Editorconfig integration
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/editorconfig.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/editorconfig.el
+  (use-package editorconfig
+    :ensure t
+    :config
+    (editorconfig-mode 1))
+#+end_src
+
+* Spell checking
+
+This will be based on flyspell for now, as that is built in. Jinx might be a valid alternative.
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/spellcheck.el")
+#+end_src
+
+Flyspell is not very smart about activation/deactivation. Copy some code from the emacswiki.
+
+#+begin_src emacs-lisp :tangle modules/spellcheck.el
+  (defun zz/flyspell-on-for-buffer-type ()
+    "Enable Flyspell appropriately for the major mode of the current buffer.  Uses `flyspell-prog-mode' for modes derived from `prog-mode', so only strings and comments get checked.  All other buffers get `flyspell-mode' to check all text.  If flyspell is already enabled, does nothing."
+    (interactive)
+    (if (not (symbol-value flyspell-mode)) ; if not already on
+	(progn
+	  (if (derived-mode-p 'prog-mode)
+	      (progn
+		(message "Flyspell on (code)")
+		(flyspell-prog-mode))
+	    ;; else
+	    (progn
+	      (message "Flyspell on (text)")
+	      (flyspell-mode 1)))
+	  ;; I tried putting (flyspell-buffer) here but it didn't seem to work
+	  )))
+
+  (defun zz/flyspell-toggle ()
+    "Turn Flyspell on if it is off, or off if it is on.  When turning on, it uses `flyspell-on-for-buffer-type' so code-vs-text is handled appropriately."
+    (interactive)
+    (if (symbol-value flyspell-mode)
+	(progn ; flyspell is on, turn it off
+	  (message "Flyspell off")
+	  (flyspell-mode -1))
+					  ; else - flyspell is off, turn it on
+      (flyspell-on-for-buffer-type)))
+
+  (defun zz/dict-english ()
+    (interactive)
+    (ispell-change-dictionary "english"))
+  (defun zz/dict-german ()
+    (interactive)
+    (ispell-change-dictionary "german"))
+
+#+end_src
+
+According to the wiki the =find-file-hook= is a great solution to toggle flyspell, so let's hook on that.
+The dictionary is set to English by default, but that can be changed with =zz/dict-german=.
+=flyspell-issue-message-flag= is set to nil to increase performance, as suggested in the wiki.
+
+#+begin_src emacs-lisp :tangle modules/spellcheck.el
+  (use-package flyspell
+    :config
+    (setq
+     ispell-dictionary "english"
+     flyspell-issue-message-flag nil)
+    :hook (find-file .  zz/flyspell-on-for-buffer-type))
+#+end_src
+
+* Programming language support
+
+** Syntax checking
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/syntax.el")
+#+end_src
+
+Install the package and make sure that tsx intializes properly
+#+begin_src emacs-lisp :tangle modules/syntax.el
+  (use-package flymake
+    :defer t
+    :hook (prog-mode . flymake-mode))
+#+end_src
+
+Enable diagnostics on cursor hover
+#+begin_src emacs-lisp :tangle modules/syntax.el
+  (use-package flymake-popon
+    :ensure t
+    :defer t
+    :hook (flymake-mode . flymake-popon-mode))
+#+end_src
+
+** Treesitter
+Treesitter offers nice syntax highlighting for supported languages.
+Don't forget to install the needed grammars before doing anything.
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/treesitter.el")
+#+end_src
+
+Map major modes to the tresitter ones
+#+begin_src emacs-lisp :tangle modules/treesitter.el
+  (use-package treesit
+    :config
+    (setq major-mode-remap-alist
+	  '((css-mode . css-ts-mode)
+	    (bash-mode . bash-ts-mode))))
+#+end_src
+
+Tell treesitter where to find the wanted grammar files
+
+#+begin_src emacs-lisp :tangle modules/treesitter.el
+  (use-package treesit
+    :config
+    (setq treesit-language-source-alist
+	  '((javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+	    (bash "https://github.com/tree-sitter/tree-sitter-bash"))))
+#+end_src
+
+Auto parenthesis matching
+#+begin_src emacs-lisp :tangle modules/treesitter.el
+  (use-package treesit
+    :hook
+    ((prog-mode . electric-pair-mode)))
+#+end_src
+
+Add a custom function to load all treesitter grammars at once
+#+begin_src emacs-lisp :tangle modules/treesitter.el
+  (defun zz/load-all-treesitter-grammars ()
+    (interactive)
+    (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist)))
+#+end_src
+
+** LSP
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/lsp.el")
+#+end_src
+
+Increase performance of eglot by improving idle time and disabling logging
+#+begin_src emacs-lisp :tangle modules/lsp.el
+  (use-package eglot
+    :custom
+    (eglot-send-changes-idle-time 0.1)
+    :config
+    (fset #'jsonrpc--log-event #'ignore))
+#+end_src
+
+** Typescript
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/typescript.el")
+#+end_src
+
+Install the package and make sure that tsx intializes properly
+#+begin_src emacs-lisp :tangle modules/typescript.el
+  (use-package typescript-mode
+    :ensure t
+    :init
+    (add-to-list 'auto-mode-alist (cons "\\.tsx\\'" #'tsx-ts-mode)))
+#+end_src
+
+Map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/typescript.el
+  (use-package treesit
+    :config
+    (add-to-list 'major-mode-remap-alist
+		 '((typescript-mode . typescript-ts-mode))))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/typescript.el
+  (use-package treesit
+    :config
+    (push '(typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src") treesit-language-source-alist)
+    (push '(tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src") treesit-language-source-alist))
+#+end_src
+
+** Rust
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/rust.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/rust.el
+  (use-package rustic
+    :ensure t
+    :config
+    (setq rustic-lsp-client 'eglot))
+#+end_src
+
+Map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/rust.el
+  (use-package treesit
+    :config
+    (add-to-list 'major-mode-remap-alist
+		 '((rust-mode . rust-ts-mode))))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/rust.el
+  (use-package treesit
+    :config
+    (push '(rust "https://github.com/tree-sitter/tree-sitter-rust" "master" "src") treesit-language-source-alist))
+#+end_src
+
+** Auto format
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/format.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/format.el
+  (use-package format-all
+    :ensure t)
+#+end_src
+
+** Markdown
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/markdown.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/markdown.el
+  (use-package markdown-mode
+    :ensure t)
+#+end_src
+
+** Make braces easier to follow
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/braces.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/braces.el
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode)
+    :ensure t)
+#+end_src
+
+** Auto completion snippets
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/snippets.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/snippets.el
+  (use-package yasnippet
+    :ensure t
+    :init
+    (yas-global-mode 1))
+#+end_src
+
+Provide some curated snippets to get started
+#+begin_src emacs-lisp :tangle modules/snippets.el
+  (use-package yasnippet-snippets
+    :ensure t)
+#+end_src
+
+Consult plugin for yasnippet
+#+begin_src emacs-lisp :tangle modules/snippets.el
+  (use-package consult-yasnippet
+    :ensure t)
+#+end_src
+
+CAPF support so that corfu picks yasnippet up
+#+begin_src emacs-lisp :tangle modules/snippets.el
+  (use-package yasnippet-capf
+    :ensure t
+    :config
+    (add-to-list 'completion-at-point-functions #'yasnippet-capf))
+#+end_src

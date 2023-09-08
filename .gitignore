@@ -3,8 +3,12 @@
 *.log
 tmp/
 
-
-/config.el
-/init.el
-/packages.el
-/custom.el
+*.el
+eln-cache
+elpa
+auto-save-list
+.cache
+.last-package-update-day
+projects
+tree-sitter
+eshell
