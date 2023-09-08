@@ -194,22 +194,23 @@ Displays key bindings for incomplete commands. Really useful for discovery
 
 Set some basic variables
 #+begin_src emacs-lisp :tangle modules/org-mode.el
-  (setq org-directory "~/Documents/org/")
-  (setq org-roam-directory "~/Documents/org-roam/")
-  (setq org-roam-index-file "~/Documents/org-roam/index.org")
 #+end_src
 
 Ensure the package is installed
 #+begin_src emacs-lisp :tangle modules/org-mode.el
   (use-package org
-    :ensure t)
+    :ensure t
+    :config
+    (setq org-directory "~/Documents/org/"))
 #+end_src
 
 Add org-roam
 
 #+begin_src emacs-lisp :tangle modules/org-mode.el
   (use-package org-roam
-    :ensure t)
+    :ensure t
+    :config
+    (setq org-roam-directory "~/Documents/org-roam/"))
 #+end_src
 
 * VIM Emulation
