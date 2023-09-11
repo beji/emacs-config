@@ -723,6 +723,26 @@ Add the treesitter grammar
     (push '(java "https://github.com/tree-sitter/tree-sitter-java") treesit-language-source-alist))
 #+end_src
 
+** Nix
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/nix.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/nix.el
+  (use-package nix-mode
+    :ensure t)
+#+end_src
+
+Add =nil= language server
+
+#+begin_src emacs-lisp :tangle modules/nix.el
+  (use-package eglot
+    :config
+    (add-to-list 'eglot-server-programs
+		 '(nix-mode . ("nil"))))
+#+end_src
+
 ** Auto format
 #+begin_src emacs-lisp :tangle init.el
   (zz/load-module "modules/format.el")
