@@ -77,6 +77,7 @@ Disable the tool bar and the menu bar
   (defconst IS-LINUX    (memq system-type '(gnu gnu/linux gnu/kfreebsd berkeley-unix)))
   (defconst IS-WINDOWS  (memq system-type '(cygwin windows-nt ms-dos)))
   (defconst IS-BSD      (memq system-type '(darwin berkeley-unix gnu/kfreebsd)))
+  (defconst LEADER-KEY "<SPC>")
 #+end_src
 
 * Helper functions to load modules
@@ -235,6 +236,7 @@ Emacs is nice. VIM is nice. Insert "why not both" meme here.
     :init
     (setq
      evil-respect-visual-line-mode t
+     evil-undo-system 'undo-redo
      evil-want-keybinding nil)
     :config
     (evil-mode))
@@ -262,10 +264,15 @@ Emacs is nice. VIM is nice. Insert "why not both" meme here.
       "g" 'magit-status
       "s" 'consult-line
       "p s" 'consult-git-grep
+      "p e" 'project-eshell
       "t s" 'zz/flyspell-toggle
       "b k" 'kill-current-buffer
       "n r f" 'org-roam-node-find
-      "n r i" 'org-roam-node-insert))
+      "n r i" 'org-roam-node-insert
+      "a" 'embark-act
+      "e a" 'embark-act
+      "e b" 'embark-bindings
+      "e d" 'embark-dwim))
 #+end_src
 
 * Minibuffers
@@ -291,6 +298,17 @@ Emacs is nice. VIM is nice. Insert "why not both" meme here.
     (setq completion-styles '(orderless)))
   (use-package consult
     :ensure t)
+  (use-package embark
+    :ensure t
+    :init
+    ;; Optionally replace the key help with a completing-read interface
+    (setq prefix-help-command #'embark-prefix-help-command)
+    )
+  ;; Consult users will also want the embark-consult package.
+  (use-package embark-consult
+    :ensure t ; only need to install it, embark loads it after consult if found
+    :hook
+    (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
 * Eshell enhancements
@@ -533,25 +551,6 @@ Don't forget to install the needed grammars before doing anything.
   (zz/load-module "modules/treesitter.el")
 #+end_src
 
-Map major modes to the tresitter ones
-#+begin_src emacs-lisp :tangle modules/treesitter.el
-  (use-package treesit
-    :config
-    (setq major-mode-remap-alist
-	  '((css-mode . css-ts-mode)
-	    (bash-mode . bash-ts-mode))))
-#+end_src
-
-Tell treesitter where to find the wanted grammar files
-
-#+begin_src emacs-lisp :tangle modules/treesitter.el
-  (use-package treesit
-    :config
-    (setq treesit-language-source-alist
-	  '((javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
-	    (bash "https://github.com/tree-sitter/tree-sitter-bash"))))
-#+end_src
-
 Auto parenthesis matching
 #+begin_src emacs-lisp :tangle modules/treesitter.el
   (use-package treesit
@@ -597,9 +596,9 @@ But we do have to map the major mode to treesitter mode
 Add the treesitter grammar
 
 #+begin_src emacs-lisp :tangle modules/bash.el
-					  ;(use-package treesit
-					  ;:config
-					  ;(push '(bash "https://github.com/tree-sitter/tree-sitter-bash") treesit-language-source-alist))
+  (use-package treesit
+    :config
+    (push '(bash "https://github.com/tree-sitter/tree-sitter-bash") treesit-language-source-alist))
 #+end_src
 
 ** Makefile
@@ -779,6 +778,50 @@ Enable LSP integration
   (use-package eglot
     :config
     (add-to-list 'eglot-server-programs '(terraform-mode . ("terraform-ls" "serve"))))
+#+end_src
+
+** CSS
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/css.el")
+#+end_src
+
+No package to install here, css-mode already exists.
+But we do have to map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/css.el
+  (use-package treesit
+    :config
+    (push '(css-mode . css-ts-mode) major-mode-remap-alist))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/css.el
+  (use-package treesit
+    :config
+    (push '(css "https://github.com/tree-sitter/tree-sitter-css") treesit-language-source-alist))
+#+end_src
+
+** JSON
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/json.el")
+#+end_src
+
+No package to install here, json-mode already exists.
+But we do have to map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/json.el
+  (use-package treesit
+    :config
+    (push '(js-json-mode . json-ts-mode) major-mode-remap-alist))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/json.el
+  (use-package treesit
+    :config
+    (push '(json "https://github.com/tree-sitter/tree-sitter-json") treesit-language-source-alist))
 #+end_src
 
 ** Make braces easier to follow
