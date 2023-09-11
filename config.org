@@ -412,10 +412,10 @@ Consult provides a nicer search, use that and rebind the standard keys to it
 Show some nice change markers on the left side of a buffer
 
 #+begin_src emacs-lisp :tangle modules/git.el
-  ;; (use-package git-gutter
-  ;;   :ensure t
-  ;;   :config
-  ;;   (global-git-gutter-mode +1))
+  (use-package git-gutter
+    :ensure t
+    :config
+    (global-git-gutter-mode +1))
 #+end_src
 
 (global-git-gutter-mode +1)
