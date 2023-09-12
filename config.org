@@ -462,6 +462,25 @@ Show some nice change markers on the left side of a buffer
     (editorconfig-mode 1))
 #+end_src
 
+* Dashboard
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/dashboard.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/dashboard.el
+  (use-package dashboard
+    :ensure t
+    :config
+    (setq dashboard-items '((recents  . 5)
+			    (bookmarks . 5)
+			    (projects . 5)
+			    (agenda . 5))
+	  dashboard-projects-backend 'project-el
+	  dashboard-center-content t)
+    (dashboard-setup-startup-hook))
+#+end_src
+
 * Spell checking
 
 This will be based on flyspell for now, as that is built in. Jinx might be a valid alternative.
