@@ -824,6 +824,17 @@ Add the treesitter grammar
     (push '(json "https://github.com/tree-sitter/tree-sitter-json") treesit-language-source-alist))
 #+end_src
 
+** ASIIDOC
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/asiidoc.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/asiidoc.el
+  (use-package adoc-mode
+    :ensure t)
+#+end_src
+
 ** Make braces easier to follow
 #+begin_src emacs-lisp :tangle init.el
   (zz/load-module "modules/braces.el")
