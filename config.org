@@ -202,10 +202,6 @@ Displays key bindings for incomplete commands. Really useful for discovery
   (zz/load-module "modules/org-mode.el")
 #+end_src
 
-Set some basic variables
-#+begin_src emacs-lisp :tangle modules/org-mode.el
-#+end_src
-
 Ensure the package is installed
 #+begin_src emacs-lisp :tangle modules/org-mode.el
   (use-package org
@@ -221,6 +217,15 @@ Add org-roam and set up the base directory
     :ensure t
     :config
     (setq org-roam-directory "~/notes"))
+#+end_src
+
+Load org-passwords for some nice password management
+
+#+begin_src emacs-lisp :tangle modules/org-mode.el
+  (require 'org-passwords (expand-file-name "modules/org-passwords.el" user-emacs-directory))
+  (setq
+   org-passwords-file "~/.org-password/store.org.gpg"
+   epg-pinentry-mode 'loopback)
 #+end_src
 
 * VIM Emulation
