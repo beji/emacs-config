@@ -570,9 +570,11 @@ Don't forget to install the needed grammars before doing anything.
   (zz/load-module "modules/treesitter.el")
 #+end_src
 
-Auto parenthesis matching
+Auto parenthesis matching and increase colors
 #+begin_src emacs-lisp :tangle modules/treesitter.el
   (use-package treesit
+    :config
+    (customize-set-variable 'treesit-font-lock-level 4)
     :hook
     ((prog-mode . electric-pair-mode)))
 #+end_src
@@ -688,7 +690,8 @@ Map the major mode to treesitter mode
 #+begin_src emacs-lisp :tangle modules/typescript.el
   (use-package treesit
     :config
-    (push '(typescript-mode . typescript-ts-mode) major-mode-remap-alist))
+    (push '(typescript-mode . typescript-ts-mode) major-mode-remap-alist)
+    (push '(js-mode . js-ts-mode) major-mode-remap-alist))
 #+end_src
 
 Add the treesitter grammar
@@ -852,6 +855,58 @@ Add the treesitter grammar
 #+begin_src emacs-lisp :tangle modules/asiidoc.el
   (use-package adoc-mode
     :ensure t)
+#+end_src
+
+** Go
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/go.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/go.el
+  (use-package go-mode
+    :hook (go-ts-mode . eglot-ensure)
+    :ensure t)
+#+end_src
+
+Map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/go.el
+  (use-package treesit
+    :config
+    (push '(go-mode . go-ts-mode) major-mode-remap-alist))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/go.el
+  (use-package treesit
+    :config
+    (push '(go "https://github.com/tree-sitter/tree-sitter-go" "master" "src") treesit-language-source-alist)
+    (push '(gomod "https://github.com/camdencheek/tree-sitter-go-mod" "main" "src") treesit-language-source-alist))
+#+end_src
+
+** Docker
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/docker.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/docker.el
+  (use-package dockerfile-mode
+    :ensure t)
+#+end_src
+
+Map the major mode to treesitter mode
+#+begin_src emacs-lisp :tangle modules/docker.el
+  (use-package treesit
+    :config
+    (push '(dockerfile-mode . dockerfile-ts-mode) major-mode-remap-alist))
+#+end_src
+
+Add the treesitter grammar
+
+#+begin_src emacs-lisp :tangle modules/docker.el
+  (use-package treesit
+    :config
+    (push '(dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" "main" "src") treesit-language-source-alist))
 #+end_src
 
 ** Make braces easier to follow
