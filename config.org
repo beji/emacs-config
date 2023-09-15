@@ -686,9 +686,10 @@ Install the package and make sure that tsx intializes properly
     (add-to-list 'auto-mode-alist (cons "\\.tsx\\'" #'tsx-ts-mode)))
 #+end_src
 
-Map the major mode to treesitter mode
+Map the major mode to treesitter mode. The remap from =js-mode= to =js-ts-mode= doesn't work for some reason so this is done with a hook. Inefficient but works
 #+begin_src emacs-lisp :tangle modules/typescript.el
   (use-package treesit
+    :hook (js-mode . js-ts-mode)
     :config
     (push '(typescript-mode . typescript-ts-mode) major-mode-remap-alist)
     (push '(js-mode . js-ts-mode) major-mode-remap-alist))
