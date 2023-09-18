@@ -210,6 +210,15 @@ Ensure the package is installed
     (setq org-directory "~/Documents/org/"))
 #+end_src
 
+Only expand content by default, not properties
+
+#+begin_src emacs-lisp :tangle modules/org-mode.el
+  (use-package org
+    :ensure t
+    :config
+    (setq org-startup-folded "content"))
+#+end_src
+
 Add org-roam and set up the base directory
 
 #+begin_src emacs-lisp :tangle modules/org-mode.el
@@ -871,8 +880,21 @@ Add the treesitter grammar
 #+end_src
 
 #+begin_src emacs-lisp :tangle modules/asiidoc.el
+
+  (defun zz/plantuml-indent-all-lines ()
+    (interactive)
+    (goto-char (point-min))
+    (while (not (eobp))
+      (plantuml-indent-line)
+      (forward-line 1)))
+
   (use-package adoc-mode
     :ensure t)
+
+  (use-package plantuml-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist (cons (purecopy "\\.puml\\'") 'plantuml-mode)))
 #+end_src
 
 ** Go
