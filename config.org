@@ -915,6 +915,25 @@ Add the treesitter grammar
     (push '(dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" "main" "src") treesit-language-source-alist))
 #+end_src
 
+** Groovy
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/groovy.el")
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/groovy.el
+  (use-package groovy-mode
+    :ensure t)
+#+end_src
+
+Enable LSP integration
+
+#+begin_src emacs-lisp :tangle modules/terraform.el
+  (use-package eglot
+    :config
+    (add-to-list 'eglot-server-programs '(groovy-mode . ("groovy-language-server"))))
+#+end_src
+
 ** Make braces easier to follow
 #+begin_src emacs-lisp :tangle init.el
   (zz/load-module "modules/braces.el")
