@@ -545,6 +545,18 @@ The dictionary is set to English by default, but that can be changed with =zz/di
     :hook (find-file .  zz/flyspell-on-for-buffer-type))
 #+end_src
 
+* Shorten yes or no questions
+
+Shortens yes or no questions to accept a simple y or n instead.
+
+#+begin_src emacs-lisp :tangle init.el
+  (defun yes-or-no-p-to-y-or-n-p (orig-fun &rest r)
+    (cl-letf (((symbol-function 'yes-or-no-p) #'y-or-n-p))
+      (apply orig-fun r)))
+
+  (advice-add 'project-kill-buffers :around #'yes-or-no-p-to-y-or-n-p)
+#+end_src
+
 * Programming language support
 
 ** Syntax checking
