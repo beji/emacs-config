@@ -553,7 +553,6 @@ The dictionary is set to English by default, but that can be changed with =zz/di
      flyspell-issue-message-flag nil)
     :hook (find-file .  zz/flyspell-on-for-buffer-type))
 #+end_src
-
 * Shorten yes or no questions
 
 Shortens yes or no questions to accept a simple y or n instead.
@@ -564,6 +563,38 @@ Shortens yes or no questions to accept a simple y or n instead.
       (apply orig-fun r)))
 
   (advice-add 'project-kill-buffers :around #'yes-or-no-p-to-y-or-n-p)
+#+end_src
+
+* TTY
+
+#+begin_src emacs-lisp :tangle init.el
+  (zz/load-module "modules/tty.el")
+#+end_src
+
+Enable mouse support in TTY
+
+#+begin_src emacs-lisp :tangle modules/tty.el
+  (use-package emacs
+    :hook (tty-setup . xterm-mouse-mode))
+#+end_src
+
+Make the cursor display the current evil state
+
+#+begin_src emacs-lisp :tangle modules/tty.el
+  (unless (display-graphic-p)
+    (use-package evil-terminal-cursor-changer
+      :ensure t
+      :config
+      (etcc-on)))
+#+end_src
+
+Enable copy/paste Support
+
+#+begin_src emacs-lisp :tangle modules/tty.el
+  (unless (display-graphic-p)
+    (use-package clipetty
+      :ensure t
+      :hook (after-init . global-clipetty-mode)))
 #+end_src
 
 * Programming language support
@@ -637,7 +668,8 @@ But we do have to map the major mode to treesitter mode
 #+begin_src emacs-lisp :tangle modules/bash.el
   (use-package treesit
     :config
-    (push '(bash-mode . bash-ts-mode) major-mode-remap-alist))
+    (push '(bash-mode . bash-ts-mode) major-mode-remap-alist)
+    (push '(sh-mode . bash-ts-mode) major-mode-remap-alist))
 #+end_src
 
 Add the treesitter grammar
@@ -871,6 +903,14 @@ Add the treesitter grammar
   (use-package treesit
     :config
     (push '(json "https://github.com/tree-sitter/tree-sitter-json") treesit-language-source-alist))
+#+end_src
+
+Enable LSP for the treesitter mode
+
+#+begin_src emacs-lisp :tangle modules/terraform.el
+  (use-package eglot
+    :config
+    (add-to-list 'eglot-server-programs '(json-ts-mode . ("vscode-json-languageserver" "--stdio"))))
 #+end_src
 
 ** ASIIDOC
