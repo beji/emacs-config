@@ -237,6 +237,23 @@ Load org-passwords for some nice password management
    epg-pinentry-mode 'loopback)
 #+end_src
 
+#+begin_src emacs-lisp :tangle modules/org-mode.el
+  (use-package org-agenda
+    :config
+    (setq org-agenda-files '("~/Documents/org-agenda/caldav-inbox.org")))
+#+end_src
+
+#+begin_src emacs-lisp :tangle modules/org-mode.el
+  (use-package org-caldav
+    :ensure t
+    :config
+    (setq
+     org-caldav-url "https://hosted.mailcow.de/SOGo/dav/bjoern@bjoernerlwein.de/Calendar"
+     org-caldav-calendar-id "personal"
+     org-caldav-inbox "~/Documents/org-agenda/caldav-inbox.org"
+     ))
+#+end_src
+
 * VIM Emulation
 Emacs is nice. VIM is nice. Insert "why not both" meme here.
 
