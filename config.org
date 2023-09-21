@@ -803,6 +803,24 @@ Add the treesitter grammar
     (push '(java "https://github.com/tree-sitter/tree-sitter-java") treesit-language-source-alist))
 #+end_src
 
+Fix the language server returning invalid stuff
+
+#+begin_src emacs-lisp :tangle modules/java.el
+  (use-package eglot
+    :config
+    (add-to-list 'eglot-server-programs '((java-ts-mode) . (eglot-eclipse-jdt "~/.local/bin/jdtls-wrapper")))
+    (add-to-list 'eglot-server-programs '((java-mode) . (eglot-eclipse-jdt "~/.local/bin/usrjdtls-wrapper")))
+    (defclass eglot-eclipse-jdt (eglot-lsp-server) ()
+      :documentation "A wrapper for jdtls as that breaks spec")
+
+    (cl-defmethod eglot-execute-command
+      ((_server eglot-eclipse-jdt) (_cmd (eql java.apply.workspaceEdit)) arguments)
+      "Eclipse JDT breaks spec and replies with edits as arguments."
+      (mapc #'eglot--apply-workspace-edit arguments)))
+#+end_src
+
+
+
 ** Nix
 
 #+begin_src emacs-lisp :tangle init.el
