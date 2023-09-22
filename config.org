@@ -944,6 +944,7 @@ Enable LSP for the treesitter mode
 
 #+begin_src emacs-lisp :tangle modules/terraform.el
   (use-package eglot
+    :if IS-LINUX
     :config
     (add-to-list 'eglot-server-programs '(json-ts-mode . ("vscode-json-languageserver" "--stdio"))))
 #+end_src
